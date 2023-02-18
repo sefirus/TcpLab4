@@ -4,17 +4,12 @@ using System.Text;
 
 try
 {
-    SendMessageFromSocket(54739);
+    SendMessageFromSocket(54736);
 }
 catch (Exception ex)
 {
     Console.WriteLine(ex.ToString());
 }
-finally
-{
-    Console.ReadLine();
-}
-
 
 void SendMessageFromSocket(int port)
 {
