@@ -15,8 +15,9 @@ public class AssignmentRepository
 
     public void CreateAssignment(Assignment newAssignment)
     {
-        var json = JsonConvert.SerializeObject(newAssignment);
-        File.WriteAllText($@"{_folderPath}\Assignment_{newAssignment.Id}.json", json);
+        var json = JsonConvert.SerializeObject(newAssignment, Formatting.Indented);
+        var path = $@"{_folderPath}\Assignment_{DateTime.UtcNow}_{newAssignment.Id}.json";
+        File.WriteAllText(path, json);
     }
 
     public Assignment? GetById(string id)

@@ -1,255 +1,219 @@
 ﻿[
   {
-    "Id": "28db0a85-32f2-4f84-9d0f-7e6c344f6d43",
-    "Content": "What is the primary cause of global warming?",
+    "Id": "eabfb5b2-1b0f-4e18-a9d9-2255f50e5c0d",
+    "Content": "What is the difference between a stack and a queue?",
     "Options": [
       {
-        "Id": "a2f8a434-c83d-4bb2-9c08-1177d9b94e5c",
-        "Content": "Carbon dioxide from burning fossil fuels"
+        "Content": "A stack is LIFO, while a queue is FIFO.",
+        "Id": "77a3d3d9-fa7a-4b39-9d2a-0d921f23ca11",
+        "IsCorrect": true
       },
       {
-        "Id": "1f93ebaa-9e3f-4b20-9183-29c3f46da86f",
-        "Content": "Deforestation"
+        "Content": "A queue is LIFO, while a stack is FIFO.",
+        "Id": "12c52a75-534c-43d2-b1d2-78c5d5c5c5d2",
+        "IsCorrect": false
       },
       {
-        "Id": "4b6074cf-ff8f-4cf6-9620-173cd2712b18",
-        "Content": "Methane emissions from agriculture"
+        "Content": "A stack and a queue are the same thing.",
+        "Id": "7f8b61e1-7bc1-4da9-8a04-4c4d4385d5d5",
+        "IsCorrect": false
       },
       {
-        "Id": "eae80f1a-12d8-45e3-8892-efcf0caee1b8",
-        "Content": "Industrial pollution"
+        "Content": "A stack and a queue are both used for sorting data.",
+        "Id": "be27c357-5284-4f7d-9d44-5b37aeeb1d2b",
+        "IsCorrect": false
       }
     ],
-    "CorrectAnswerId": "a2f8a434-c83d-4bb2-9c08-1177d9b94e5c"
+    "CorrectAnswerId": "77a3d3d9-fa7a-4b39-9d2a-0d921f23ca11"
   },
   {
-    "Id": "4c4b10d4-5552-4b28-a82c-1c6e9a6b2d6a",
-    "Content": "What is an ecosystem?",
-    "Options": [
-      {
-        "Id": "eb9d27a3-eb08-4492-82cf-57e3380b97c5",
-        "Content": "A community of living and non-living things in a specific area"
-      },
-      {
-        "Id": "4c4b10d4-5552-4b28-a82c-1c6e9a6b2d6a",
-        "Content": "A group of similar organisms that can interbreed"
-      },
-      {
-        "Id": "2c270cf1-616e-4a92-b6f8-b0aeb425fba9",
-        "Content": "The interaction between organisms and their environment"
-      },
-      {
-        "Id": "f023c485-4a20-4c60-9d8e-ebf10a431b87",
-        "Content": "The process of breaking down dead organic matter into simpler compounds"
-      }
-    ],
-    "CorrectAnswerId": "eb9d27a3-eb08-4492-82cf-57e3380b97c5"
-  },
-  {
-    "Id": "5a6c5e5e-2356-43d7-b2db-39c6461812d2",
-    "Content": "What is the primary source of energy for most ecosystems?",
-    "Options": [
-      {
-        "Id": "f607df43-1c95-45e3-bfa3-2b674a8b22c1",
-        "Content": "The sun"
-      },
-      {
-        "Id": "cc357f2a-4ad4-4d07-9ba9-f1e4e66652f1",
-        "Content": "Geothermal energy"
-      },
-      {
-        "Id": "1e50c30c-0654-4dc4-a4d9-23c4de15ad09",
-        "Content": "Wind energy"
-      },
-      {
-        "Id": "5a6c5e5e-2356-43d7-b2db-39c6461812d2",
-        "Content": "Fossil fuels"
-      }
-    ],
-    "CorrectAnswerId": "f607df43-1c95-45e3-bfa3-2b674a8b22c1"
-  },
-  {
-    "Id": "7fa5b0e5-8bb2-40fb-9a1e-5f5b8d5b5bc5",
-    "Content": "What is a keystone species?",
-    "Options": [
-      {
-        "Id": "7fa5b0e5-8bb2-40fb-9a1e-5f5b8d5b5bc5",
-        "Content": "A species that plays a critical role in the functioning of an ecosystem"
-      },
-      {
-        "Id": "e689f7e7-87ea-44a4-aa4d-0ba0e086e4f4",
-        "Content": "A species that is endangered or threatened"
-      },
-      {
-        "Id": "c6576885-28fa-44f9-9a9a-5ba5f5c5d8fc",
-        "Content": "A species that is invasive and disrupts the balance of an ecosystem"
-      },
-      {
-        "Id": "03f8b54e-af11-47c5-a786-3509e0dcbbe6",
-        "Content": "A species that is used as a bioindicator of environmental health"
-      }
-    ],
-    "CorrectAnswerId": "7fa5b0e5-8bb2-40fb-9a1e-5f5b8d5b5bc5"
-  },
-  {
-    "Id": "d4eb8b17-518d-4a3a-95fd-9a9d1931c921",
-    "Content": "What is the process by which carbon is removed from the atmosphere and stored in plants and soil?",
-    "Options": [
-      {
-        "Id": "c7dce3da-f9fc-4c96-917d-2c015e15b8a7",
-        "Content": "Photosynthesis"
-      },
-      {
-        "Id": "5eb5d5f5-22f5-4c5d-9605-696c7d38e3df",
-        "Content": "Respiration"
-      },
-      {
-        "Id": "d4eb8b17-518d-4a3a-95fd-9a9d1931c921",
-        "Content": "Carbon capture and storage"
-      },
-      {
-        "Id": "a9ecfcfe-60d6-4247-8a03-4682f53e211a",
-        "Content": "Combustion"
-      }
-    ],
-    "CorrectAnswerId": "c7dce3da-f9fc-4c96-917d-2c015e15b8a7"
-  },
-  {
-    "Id": "39e93db0-5c34-4da3-a07c-c3fae2c0bfb2",
-    "Content": "What is a dead zone?",
-    "Options": [
-      {
-        "Id": "2ba5d5ce-7c8a-4c5d-9e61-4f055ad4f4e4",
-        "Content": "A zone in the ocean where there is no oxygen and marine life cannot survive"
-      },
-      {
-        "Id": "d8777d38-bbdf-4b34-97d1-0e0059c88b6f",
-        "Content": "A zone in the ocean where there is high salinity and few species can survive"
-      },
-      {
-        "Id": "9ccfda44-0711-4db8-82b4-96b032a15862",
-        "Content": "A zone in the ocean where there are high concentrations of nutrients and algae blooms occur"
-      },
-      {
-        "Id": "39e93db0-5c34-4da3-a07c-c3fae2c0bfb2",
-        "Content": "A zone in the ocean where there are no fish"
-      }
-    ],
-    "CorrectAnswerId": "9ccfda44-0711-4db8-82b4-96b032a15862"
-  },
-  {
-    "Id": "1fc6b027-c123-4dfe-9f23-efee6bfa0440",
-    "Content": "What is a variable?",
-    "Options": [
-      {
-        "Id": "232ed301-31a9-413e-8f80-66f88c6c1e6d",
-        "Content": "A function"
-      },
-      {
-        "Id": "6b735d6a-9436-49f6-8e9e-60a1afca80f9",
-        "Content": "A value that can change"
-      },
-      {
-        "Id": "88941b9b-7b46-4e31-b7de-4c4f4e63e834",
-        "Content": "A loop"
-      },
-      {
-        "Id": "1fc6b027-c123-4dfe-9f23-efee6bfa0440",
-        "Content": "A data structure"
-      }
-    ],
-    "CorrectAnswerId": "6b735d6a-9436-49f6-8e9e-60a1afca80f9"
-  },
-  {
-    "Id": "2f95a9a9-3a20-47ed-8bf6-260d6e1b6a17",
+    "Id": "25b8576d-dcb8-4eb4-bf4b-9e735c1d0134",
     "Content": "What is an algorithm?",
     "Options": [
       {
-        "Id": "d548e6bb-7086-42aa-b1bb-cd9b9c040ef5",
-        "Content": "A type of programming language"
+        "Content": "A piece of computer hardware.",
+        "Id": "d21d935f-e996-4ce7-ba1c-80c8d51edc32",
+        "IsCorrect": false
       },
       {
-        "Id": "2f95a9a9-3a20-47ed-8bf6-260d6e1b6a17",
-        "Content": "A step-by-step process for solving a problem"
+        "Content": "A type of software application.",
+        "Id": "5a6f1c69-5e6e-45a8-a1af-f5df85b73521",
+        "IsCorrect": false
       },
       {
-        "Id": "a24589df-7686-4768-aa8b-91a1e798fc70",
-        "Content": "A file extension"
+        "Content": "A set of instructions for solving a problem or accomplishing a task.",
+        "Id": "dd7d3c83-9323-4aa1-bf1b-0e13c67607fb",
+        "IsCorrect": true
       },
       {
-        "Id": "f0127658-2dc2-4da2-ba0d-80e47ecb67f1",
-        "Content": "A type of computer hardware"
+        "Content": "An electronic device used for measuring temperature.",
+        "Id": "e4486c5e-53a8-47d9-9d0b-fa0baff74ea8",
+        "IsCorrect": false
       }
     ],
-    "CorrectAnswerId": "2f95a9a9-3a20-47ed-8bf6-260d6e1b6a17"
+    "CorrectAnswerId": "dd7d3c83-9323-4aa1-bf1b-0e13c67607fb"
   },
   {
-    "Id": "3ddc4cf4-f1d5-4698-aa37-74c17fb500de",
-    "Content": "What is a compiler?",
+    "Id": "4aa348df-3fd3-4a95-82a5-5f62c8e87410",
+    "Content": "What is the time complexity of the merge sort algorithm?",
     "Options": [
       {
-        "Id": "6f600fd6-d962-49d9-88b8-6e37497ebc05",
-        "Content": "A type of data structure"
+        "Content": "O(1)",
+        "Id": "e1566c32-d8d8-42c7-a935-66743782f07a",
+        "IsCorrect": false
       },
       {
-        "Id": "3ddc4cf4-f1d5-4698-aa37-74c17fb500de",
-        "Content": "A program that translates code written in a high-level language to machine code"
+        "Content": "O(n)",
+        "Id": "e90d50b7-9d03-4e61-bbf6-0e88111b8dc8",
+        "IsCorrect": false
       },
       {
-        "Id": "3b7a8533-9ab6-4c1f-9e7e-631b84e11b16",
-        "Content": "A loop"
+        "Content": "O(n log n)",
+        "Id": "a32d8ee8-6e03-4a5d-a7db-8b726a978b5e",
+        "IsCorrect": true
       },
       {
-        "Id": "2ead3567-28a4-4489-a110-e30738dc994c",
-        "Content": "A type of programming language"
+        "Content": "O(n^2)",
+        "Id": "0f62d0af-4b19-4c3d-a253-4d3429fc9b9d",
+        "IsCorrect": false
       }
     ],
-    "CorrectAnswerId": "3ddc4cf4-f1d5-4698-aa37-74c17fb500de"
+    "CorrectAnswerId": "a32d8ee8-6e03-4a5d-a7db-8b726a978b5e"
   },
   {
-    "Id": "4a4ca65d-9baf-4b4c-b93b-7570e6a5a6bf",
-    "Content": "What is a stack?",
+    "Id": "94fbd1e6-979f-4780-9aa7-f8a67ba249c7",
+    "Content": "What is the difference between an abstract class and an interface in C#?",
     "Options": [
       {
-        "Id": "7b93a062-0cc3-48a2-a1ba-3b13cf58d843",
-        "Content": "A type of sorting algorithm"
+        "Content": "An abstract class can have implementation for some of its members, while an interface cannot",
+        "Id": "2cbe276a-9d9f-4c47-8a04-206139e63d63",
+        "IsCorrect": true
       },
       {
-        "Id": "b9f9b1a7-c1f1-4a0a-b02e-8042ebf1ebc4",
-        "Content": "A data structure that follows the Last-In-First-Out (LIFO) principle"
+        "Content": "An interface can have implementation for some of its members, while an abstract class cannot",
+        "Id": "f4524f4f-9e4e-42f8-8e1a-965ae2f33c87",
+        "IsCorrect": false
       },
       {
-        "Id": "4a4ca65d-9baf-4b4c-b93b-7570e6a5a6bf",
-        "Content": "A type of computer"
+        "Content": "An abstract class can only have public members, while an interface can have members with different access levels",
+        "Id": "7a9bce5e-8a69-47e2-9e52-10d839ccfbb2",
+        "IsCorrect": false
       },
       {
-        "Id": "ea76f1fc-6f22-4ad4-9d4e-16c9d4db4a72",
-        "Content": "A type of programming language"
+        "Content": "There is no difference between an abstract class and an interface",
+        "Id": "04f4bdcf-9db9-4c1f-98e4-01d2012dbf0e",
+        "IsCorrect": false
       }
     ],
-    "CorrectAnswerId": "b9f9b1a7-c1f1-4a0a-b02e-8042ebf1ebc4"
+    "CorrectAnswerId": "2cbe276a-9d9f-4c47-8a04-206139e63d63"
   },
   {
-    "Id": "5d26c793-8f89-41c6-9547-117ab08972f8",
-    "Content": "What is recursion?",
+    "Id": "d0c795b7-21c3-4f7b-8599-36e7e0d38ef0",
+    "Content": "What is the most popular programming language?",
     "Options": [
       {
-        "Id": "5d26c793-8f89-41c6-9547-117ab08972f8",
-        "Content": "A function that calls itself"
+        "Id": "5f5ca056-49b5-4a67-a8e5-1b4d3b4a4f9a",
+        "Content": "Java",
+        "IsCorrect": false
       },
       {
-        "Id": "1dc727b9-79f2-4c3e-80cc-01e5f5fa12e5",
-        "Content": "A type of loop"
+        "Id": "cfb49c08-cb1d-4682-98b3-92eb1c12e8d3",
+        "Content": "Python",
+        "IsCorrect": true
       },
       {
-        "Id": "cf50cbef-4d4e-4b4a-9c47-0061c9d9f2a2",
-        "Content": "A type of data structure"
+        "Id": "6c2a0d98-466e-46eb-a03b-880e6af8e6d1",
+        "Content": "C#",
+        "IsCorrect": false
       },
       {
-        "Id": "38de14c7-9d15-4386-9221-394773eedc7f",
-        "Content": "A type of programming language"
+        "Id": "ea14eb9d-2cb3-4f85-9651-fd8c6c41f4f3",
+        "Content": "JavaScript",
+        "IsCorrect": false
       }
     ],
-    "CorrectAnswerId": "5d26c793-8f89-41c6-9547-117ab08972f8"
+    "CorrectAnswerId": "cfb49c08-cb1d-4682-98b3-92eb1c12e8d3"
+  },
+  {
+    "Id": "ec146e6e-6566-44fd-97f9-2a7cf126e48c",
+    "Content": "What is the difference between a stack and a queue?",
+    "Options": [
+      {
+        "Id": "d2e85cc1-46a8-4445-9f9a-96412fc73b27",
+        "Content": "A stack is a Last-In-First-Out (LIFO) data structure, while a queue is a First-In-First-Out (FIFO) data structure.",
+        "IsCorrect": true
+      },
+      {
+        "Id": "9d18b925-56fa-4368-89f5-6ecae1381b60",
+        "Content": "A stack is a First-In-First-Out (FIFO) data structure, while a queue is a Last-In-First-Out (LIFO) data structure.",
+        "IsCorrect": false
+      },
+      {
+        "Id": "30d35ee6-37dd-439a-b6de-7b142edf6dfc",
+        "Content": "A stack and a queue are the same thing.",
+        "IsCorrect": false
+      },
+      {
+        "Id": "7f0cf57a-8d16-4dd4-9734-b25e1fb8af1f",
+        "Content": "A stack and a queue are both examples of linked lists.",
+        "IsCorrect": false
+      }
+    ],
+    "CorrectAnswerId": "d2e85cc1-46a8-4445-9f9a-96412fc73b27"
+  },
+  {
+    "Id": "5b5c0cd3-0b3a-4061-bf94-9b9e9778b60a",
+    "Content": "What is the result of the expression 2 + 2?",
+    "Options": [
+      {
+        "Content": "3",
+        "Id": "e49c782a-8d61-48c9-93dc-9f9e5d5ce5e5",
+        "IsCorrect": false
+      },
+      {
+        "Content": "4",
+        "Id": "2d8b3a3b-b6b1-45e3-bd8c-7a69a73aa080",
+        "IsCorrect": true
+      },
+      {
+        "Content": "5",
+        "Id": "da7d79f2-68c7-4a8a-b3c3-f31d71eddbf7",
+        "IsCorrect": false
+      },
+      {
+        "Content": "6",
+        "Id": "55a51bb4-fb01-4d46-988e-7f16f2a067c7",
+        "IsCorrect": false
+      }
+    ],
+    "CorrectAnswerId": "2d8b3a3b-b6b1-45e3-bd8c-7a69a73aa080"
+  },
+  {
+    "Id": "ca58e331-0f5a-436c-a1d5-5de5b5a05556",
+    "Content": "What is the time complexity of binary search?",
+    "Options": [
+      {
+        "Content": "O(n)",
+        "Id": "27d0a204-547f-4916-8fa6-0e7ec34c6c0f",
+        "IsCorrect": false
+      },
+      {
+        "Content": "O(log n)",
+        "Id": "1c01804a-8b20-44f5-91e4-32da4e8c1574",
+        "IsCorrect": true
+      },
+      {
+        "Content": "O(n^2)",
+        "Id": "679f2d70-3c03-43df-9d9a-b1b00e74b5d8",
+        "IsCorrect": false
+      },
+      {
+        "Content": "O(1)",
+        "Id": "f1d2c8d4-b4de-4e48-87ad-4740329b36d6",
+        "IsCorrect": false
+      }
+    ],
+    "CorrectAnswerId": "1c01804a-8b20-44f5-91e4-32da4e8c1574"
   }
 ]
+

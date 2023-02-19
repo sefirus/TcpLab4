@@ -9,12 +9,10 @@ namespace TcpServer;
 public class AssignmentController: ControllerBase
 {
     private List<Question> _questions = new();
-    private AssignmentRepository _assignmentRepository;
+    private AssignmentRepository? _assignmentRepository;
 
-    public AssignmentController()
-    {
-        _assignmentRepository = new AssignmentRepository(AssignmentsFolderPath);
-    }
+    private AssignmentRepository AssignmentRepository => 
+        _assignmentRepository ??= new AssignmentRepository(AssignmentsFolderPath);
 
     private List<Question> GetQuestions()
     {
@@ -40,7 +38,7 @@ public class AssignmentController: ControllerBase
             AssigneeName = assignee,
             Questions = questions.ToHashSet()
         };
-        _assignmentRepository.CreateAssignment(newAssignment);
+        AssignmentRepository.CreateAssignment(newAssignment);
         var response = new Message()
         {
             Parameters = new Dictionary<string, string>
@@ -63,7 +61,7 @@ public class AssignmentController: ControllerBase
         
         if (request.Parameters.TryGetValue("assignmentId", out var id))
         {
-            var assignment = _assignmentRepository.GetById(id);
+            var assignment = AssignmentRepository.GetById(id);
             if (assignment is null)
             {
                 return Message.GetResponseError("Not found!");
@@ -80,7 +78,7 @@ public class AssignmentController: ControllerBase
         }
         else
         {
-            var assignments = _assignmentRepository.GetAll();
+            var assignments = AssignmentRepository.GetAll();
             response = new Message()
             {
                 Parameters = new Dictionary<string, string>

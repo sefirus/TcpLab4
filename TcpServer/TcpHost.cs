@@ -20,7 +20,8 @@ public class TcpHost
 
     public TcpHost(string settingsFilePath)
     {
-        _configuration = JsonHelper.ReadObject<Dictionary<string, string>>(settingsFilePath);
+        _configuration = JsonHelper.ReadObject<Dictionary<string, string>>(settingsFilePath)
+            ?? throw new Exception("Cant read settings!");
     }
 
     public TcpHost AddQuestions(string filePath)
@@ -33,7 +34,7 @@ public class TcpHost
         _questionsFilePath = filePath;
         foreach (var keyValue in _endpoints)
         {
-            keyValue.Value.Item2.QuestionsTemplatePath ??= _questionsFilePath;
+            //keyValue.Value.Item2.QuestionsTemplatePath ??= _questionsFilePath;
         }
 
         return this;
@@ -49,7 +50,7 @@ public class TcpHost
         _assignmentsFolderPath = folderPath;
         foreach (var keyValue in _endpoints)
         {
-            keyValue.Value.Item2.AssignmentsFolderPath ??= _assignmentsFolderPath;
+            //keyValue.Value.Item2.AssignmentsFolderPath ??= _assignmentsFolderPath;
         }
 
         return this;
@@ -95,10 +96,10 @@ public class TcpHost
             {
                 continue;
             }
-
-            var func = (Func<TController, Message, Message>)Delegate
-                    .CreateDelegate(typeof(Func<TController, Message, Message>), null, methodInfo)
-                as Func<ControllerBase, Message, Message>;
+            
+            var genericFunc = (Func<TController, Message, Message>)Delegate
+                .CreateDelegate(typeof(Func<TController, Message, Message>), null, methodInfo);
+            var func = new Func<ControllerBase, Message, Message>((a, b) => genericFunc((TController)a, b));
             var address = methodInfo.CustomAttributes
                 .FirstOrDefault(a => a.AttributeType == attributeType)?
                 .ConstructorArguments?
@@ -161,8 +162,9 @@ public class TcpHost
             }
         }
 
-        Console.WriteLine($"\tGenerated response: {response}");
-        socketHandler.Send(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response)));
+        var serializedResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
+        Console.WriteLine($"\tGenerated response: {serializedResponse}");
+        socketHandler.Send(Encoding.UTF8.GetBytes(serializedResponse));
         if (data.Contains("<TheEnd>"))
         {
             Console.WriteLine("Closed connection");
