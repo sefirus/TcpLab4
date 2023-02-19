@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Core;
@@ -10,8 +9,13 @@ namespace TcpServer;
 public class TcpHost
 {
     public int Port { get; private set; }
-    private readonly Dictionary<string, (string, ControllerBase, Func<ControllerBase, Message, Message>)> _endpoints = new();
+
+    private readonly Dictionary<string, (string, ControllerBase, Func<ControllerBase, Message, Message>)> _endpoints =
+        new();
+
     private readonly Dictionary<string, string> _configuration;
+    private string _questionsFilePath;
+    private string _assignmentsFolderPath;
 
     public TcpHost(string filePath)
     {
@@ -22,13 +26,47 @@ public class TcpHost
             {
                 throw new InvalidOperationException("Read the file before accessing the trucks!");
             }
-            _configuration = JsonConvert.DeserializeObject<Dictionary<string, string>>(readText) 
-                ?? throw new ArgumentNullException($"FilePath", "File you provided is not in correct format!");
+
+            _configuration = JsonConvert.DeserializeObject<Dictionary<string, string>>(readText)
+                             ?? throw new ArgumentNullException($"FilePath",
+                                 "File you provided is not in correct format!");
         }
         catch (Exception e)
         {
             throw new InvalidOperationException("File you provided can`t be accessed!", e);
         }
+    }
+
+    public TcpHost AddQuestions(string filePath)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            throw new ArgumentNullException(nameof(filePath), "Path you provided cant by null!");
+        }
+
+        _questionsFilePath = filePath;
+        foreach (var keyValue in _endpoints)
+        {
+            keyValue.Value.Item2.QuestionsTemplatePath ??= _questionsFilePath;
+        }
+
+        return this;
+    }
+
+    public TcpHost AddAssignmentsFolder(string folderPath)
+    {
+        if (string.IsNullOrWhiteSpace(folderPath))
+        {
+            throw new ArgumentNullException(nameof(folderPath), "Path you provided cant by null!");
+        }
+
+        _assignmentsFolderPath = folderPath;
+        foreach (var keyValue in _endpoints)
+        {
+            keyValue.Value.Item2.AssignmentsFolderPath ??= _assignmentsFolderPath;
+        }
+
+        return this;
     }
 
     public TcpHost InitializeHost()
@@ -37,11 +75,12 @@ public class TcpHost
         {
             throw new ArgumentNullException($"Port", "Port you provided is not in correct format!");
         }
+
         Port = port;
         return this;
     }
 
-    public TcpHost AddControllers<TController>() where TController: ControllerBase, new ()
+    public TcpHost AddControllers<TController>() where TController : ControllerBase, new()
     {
         var controllerType = typeof(TController);
         var attributeType = typeof(ControllerMethodAttribute);
@@ -51,14 +90,19 @@ public class TcpHost
         {
             throw new InvalidOperationException($"Controller {controllerType} is already added!");
         }
+
         var controllerMethods = controllerType
             .GetMethods()
             .Where(m => m.GetCustomAttributes(attributeType, false).Length > 0);
-        TController newController = new TController();
+        TController newController = new TController
+        {
+            AssignmentsFolderPath = _assignmentsFolderPath,
+            QuestionsTemplatePath = _questionsFilePath
+        };
         foreach (var methodInfo in controllerMethods)
         {
             var parameters = methodInfo.GetParameters();
-            if (methodInfo.ReturnType != typeof(Message) 
+            if (methodInfo.ReturnType != typeof(Message)
                 || parameters.FirstOrDefault()?.ParameterType != typeof(Message)
                 || parameters.Length != 1)
             {
@@ -74,7 +118,8 @@ public class TcpHost
                 .FirstOrDefault()
                 .Value?.ToString() ?? throw new InvalidOperationException("Controller contains invalid attributes!");
             _endpoints.Add(address, (controllerType.ToString(), newController, func));
-            }
+        }
+
         return this;
     }
 
@@ -82,8 +127,9 @@ public class TcpHost
     {
         if (_endpoints is null)
         {
-            throw new InvalidOperationException("Initialize endpoints first!"); 
+            throw new InvalidOperationException("Initialize endpoints first!");
         }
+
         Console.OutputEncoding = Encoding.Unicode;
         Console.InputEncoding = Encoding.Unicode;
 
@@ -119,12 +165,12 @@ public class TcpHost
             Console.WriteLine($"\tReceived message: {data}");
             var receivedMessage = JsonConvert.DeserializeObject<Message>(data);
             var response = Message.GetResponseError("Bad request");
-            if (receivedMessage is not null 
+            if (receivedMessage is not null
                 && _endpoints.TryGetValue(receivedMessage.Address, out var requestHandler))
             {
                 response = requestHandler.Item3(requestHandler.Item2, receivedMessage);
             }
-            
+
             Console.WriteLine($"\tGenerated response: {response}");
             socketHandler.Send(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response)));
             if (data.Contains("<TheEnd>"))
