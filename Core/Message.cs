@@ -2,7 +2,7 @@
 
 public class Message
 {
-    public static Message GetError(string message)
+    public static Message GetResponseError(string message)
     {
         var errorMessage = new Message()
         {

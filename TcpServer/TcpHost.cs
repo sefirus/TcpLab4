@@ -118,7 +118,7 @@ public class TcpHost
             data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
             Console.WriteLine($"\tReceived message: {data}");
             var receivedMessage = JsonConvert.DeserializeObject<Message>(data);
-            var response = Message.GetError("Bad request");
+            var response = Message.GetResponseError("Bad request");
             if (receivedMessage is not null 
                 && _endpoints.TryGetValue(receivedMessage.Address, out var requestHandler))
             {
