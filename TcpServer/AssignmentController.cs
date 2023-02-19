@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.Entities;
 using Core.Extensions;
+using TcpServer.Repositories;
 using TcpServer.Utilities;
 
 namespace TcpServer;
@@ -8,6 +9,12 @@ namespace TcpServer;
 public class AssignmentController: ControllerBase
 {
     private List<Question> _questions = new();
+    private AssignmentRepository _assignmentRepository;
+
+    public AssignmentController()
+    {
+        _assignmentRepository = new AssignmentRepository(AssignmentsFolderPath);
+    }
 
     private List<Question> GetQuestions()
     {
@@ -34,6 +41,7 @@ public class AssignmentController: ControllerBase
             AssigneeName = assignee,
             Questions = questions.ToHashSet()
         };
+        _assignmentRepository.CreateAssignment(newAssignment);
         var response = new Message()
         {
             Parameters = new Dictionary<string, string>
