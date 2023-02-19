@@ -22,7 +22,6 @@ public class AssignmentController: ControllerBase
         {
             _questions = new ListGetter<Question>()
                 .SetFilePath(QuestionsTemplatePath)
-                .ReadEntities()
                 .GetEntities();
         }
 
@@ -56,7 +55,12 @@ public class AssignmentController: ControllerBase
     [ControllerMethod("get")]
     public Message Get(Message request)
     {
-        Message response;
+        var response = Message.GetResponseError("Wrong secret");
+        if (!request.Parameters.TryGetValue("secret", out var s) || s != Configuration["ClientSecret"])
+        {
+            return response;
+        }
+        
         if (request.Parameters.TryGetValue("assignmentId", out var id))
         {
             var assignment = _assignmentRepository.GetById(id);

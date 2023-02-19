@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Core.Helpers;
 using Core.Interfaces;
-using Newtonsoft.Json;
 
 namespace TcpServer.Utilities;
 
@@ -22,35 +22,13 @@ public class ListGetter<TEntity> : IListGetter<TEntity>
         return this;   
     }
 
-    public IListGetter<TEntity> ReadEntities()
-    {
-        if (string.IsNullOrWhiteSpace(_filePath))
-        {
-            throw new InvalidOperationException("Set file path before reading!");
-        }
-
-        try
-        {
-            _readFile = File.ReadAllText(_filePath);
-        }
-        catch (Exception e)
-        {
-            throw new InvalidOperationException("File you provided can`t be accessed!", e);
-        }
-
-        return this;
-    }
-
     public List<TEntity> GetEntities()
     {
-        if (_readFile is null)
-        {
-            throw new InvalidOperationException("Read the file before accessing the trucks!");
-        }
-        var trailers = JsonConvert.DeserializeObject<List<TEntity>>(_readFile);
-        _entities = trailers ?? throw new ArgumentNullException($"FilePath", 
+        var entities = JsonHelper.ReadObject<List<TEntity>>(_filePath);
+        _entities = entities ?? throw new ArgumentNullException($"FilePath", 
             "File you provided is not in correct format!");
-        return _entities;       }
+        return _entities;       
+    }
 
     public IQueryable<TEntity> GetEntitiesQueryable()
     {

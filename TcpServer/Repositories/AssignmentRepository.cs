@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Helpers;
 using Newtonsoft.Json;
 
 namespace TcpServer.Repositories;
@@ -24,13 +25,7 @@ public class AssignmentRepository
             .GetFiles(_folderPath)
             .FirstOrDefault(f => f.Contains(id));
 
-        if (filePath is null || !File.Exists(filePath))
-        {
-            return null;
-        }
-        
-        var readText = File.ReadAllText(filePath);
-        var result = JsonConvert.DeserializeObject<Assignment>(readText);
+        var result = JsonHelper.ReadObject<Assignment>(filePath);
         return result;
     }
     
@@ -39,13 +34,7 @@ public class AssignmentRepository
         var filePaths = Directory.GetFiles(_folderPath);
         foreach (var filePath in filePaths)
         {
-            if (!File.Exists(filePath))
-            {
-                continue;
-            }
-        
-            var readText = File.ReadAllText(filePath);
-            var result = JsonConvert.DeserializeObject<Assignment>(readText);
+            var result = JsonHelper.ReadObject<Assignment>(filePath);
             if (result is null)
             {
                 continue;

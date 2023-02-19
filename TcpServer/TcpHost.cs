@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 using Core;
+using Core.Helpers;
 using Newtonsoft.Json;
 
 namespace TcpServer;
@@ -17,24 +18,9 @@ public class TcpHost
     private string _questionsFilePath;
     private string _assignmentsFolderPath;
 
-    public TcpHost(string filePath)
+    public TcpHost(string settingsFilePath)
     {
-        try
-        {
-            var readText = File.ReadAllText(filePath);
-            if (readText is null)
-            {
-                throw new InvalidOperationException("Read the file before accessing the trucks!");
-            }
-
-            _configuration = JsonConvert.DeserializeObject<Dictionary<string, string>>(readText)
-                             ?? throw new ArgumentNullException($"FilePath",
-                                 "File you provided is not in correct format!");
-        }
-        catch (Exception e)
-        {
-            throw new InvalidOperationException("File you provided can`t be accessed!", e);
-        }
+        _configuration = JsonHelper.ReadObject<Dictionary<string, string>>(settingsFilePath);
     }
 
     public TcpHost AddQuestions(string filePath)
