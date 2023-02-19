@@ -1,9 +1,4 @@
 ﻿{
   "Port": 54736,
-  "StartAssignment": "new",
-  "SubmitAssignment": "end",
-  "AnswerQuestion": "answer",
-  "QuestionId": "qid",
-  "OptionId": "oid",
-  "AssignmentId": "aid"
+  "AccessSecret": "1f5a9885-15a2-4ccd-976b-ce844d95ae84"
 }

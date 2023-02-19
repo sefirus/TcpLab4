@@ -5,7 +5,7 @@ var settingsPath = $@"{repoDirectory}\Core\Settings.json";
 var questionsPath = $@"{repoDirectory}\Core\Questions.json";
 var assignmentsFolderPath = $@"{repoDirectory}\TcpServer/Assignments";
 new TcpHost(settingsPath)
-    .AddControllers<AssignmentController>()
+    .AddController<AssignmentController>()
     .AddAssignmentsFolder(assignmentsFolderPath)
     .AddQuestions(questionsPath)
     .InitializeHost()

@@ -80,7 +80,7 @@ public class TcpHost
         return this;
     }
 
-    public TcpHost AddControllers<TController>() where TController : ControllerBase, new()
+    public TcpHost AddController<TController>() where TController : ControllerBase, new()
     {
         var controllerType = typeof(TController);
         var attributeType = typeof(ControllerMethodAttribute);
@@ -125,9 +125,9 @@ public class TcpHost
 
     public TcpHost Run()
     {
-        if (_endpoints is null)
+        if (!_endpoints.Any() || _questionsFilePath is null || _assignmentsFolderPath is null)
         {
-            throw new InvalidOperationException("Initialize endpoints first!");
+            throw new InvalidOperationException("Initialize data first!");
         }
 
         Console.OutputEncoding = Encoding.Unicode;
@@ -142,7 +142,8 @@ public class TcpHost
         {
             sListener.Bind(ipEndPoint);
             sListener.Listen(10);
-            HandleRequest(ipEndPoint, sListener);
+            while (true) HandleRequest(ipEndPoint, sListener);
+
         }
         catch (Exception ex)
         {
@@ -154,33 +155,34 @@ public class TcpHost
 
     private void HandleRequest(IPEndPoint ipEndPoint, Socket sListener)
     {
-        while (true)
+        Console.WriteLine($"Waiting for the connection on {ipEndPoint}");
+        using var socketHandler = sListener.Accept();
+        var bytes = new byte[1024];
+        var bytesRec = socketHandler.Receive(bytes);
+        var receivedMessage = Message.Deserialize(bytes, bytesRec, out var data);
+        var response = Message.GetResponseError("Bad request");
+        if (receivedMessage is not null
+            && _endpoints.TryGetValue(receivedMessage.Address, out var requestHandler))
         {
-            Console.WriteLine($"Waiting for the connection on {ipEndPoint}");
-            using var socketHandler = sListener.Accept();
-            string? data = null;
-            var bytes = new byte[1024];
-            var bytesRec = socketHandler.Receive(bytes);
-            data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
-            Console.WriteLine($"\tReceived message: {data}");
-            var receivedMessage = JsonConvert.DeserializeObject<Message>(data);
-            var response = Message.GetResponseError("Bad request");
-            if (receivedMessage is not null
-                && _endpoints.TryGetValue(receivedMessage.Address, out var requestHandler))
+            try
             {
                 response = requestHandler.Item3(requestHandler.Item2, receivedMessage);
-            }
-
-            Console.WriteLine($"\tGenerated response: {response}");
-            socketHandler.Send(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response)));
-            if (data.Contains("<TheEnd>"))
+            } 
+            catch (Exception e)
             {
-                Console.WriteLine("Closed connection");
-                break;
+                response.Body = e;
             }
-
-            socketHandler.Shutdown(SocketShutdown.Both);
-            socketHandler.Close();
         }
+
+        Console.WriteLine($"\tGenerated response: {response}");
+        socketHandler.Send(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response)));
+        if (data.Contains("<TheEnd>"))
+        {
+            Console.WriteLine("Closed connection");
+            throw new Exception("Closed connection");
+        }
+
+        socketHandler.Shutdown(SocketShutdown.Both);
+        socketHandler.Close();
     }
 }
