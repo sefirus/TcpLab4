@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Linq.Expressions;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Core;
@@ -9,7 +10,7 @@ namespace TcpServer;
 public class TcpHost
 {
     public int Port { get; private set; }
-    private Dictionary<string, Func<Message, Message>>? _endpoints;
+    private readonly Dictionary<string, (string, ControllerBase, Func<ControllerBase, Message, Message>)> _endpoints = new();
     private readonly Dictionary<string, string> _configuration;
 
     public TcpHost(string filePath)
@@ -37,10 +38,43 @@ public class TcpHost
             throw new ArgumentNullException($"Port", "Port you provided is not in correct format!");
         }
         Port = port;
-        _endpoints = new Dictionary<string, Func<Message, Message>>()
+        return this;
+    }
+
+    public TcpHost AddControllers<TController>() where TController: ControllerBase, new ()
+    {
+        var controllerType = typeof(TController);
+        var attributeType = typeof(ControllerMethodAttribute);
+        var isControllerAdded = _endpoints
+            .Any(c => c.Value.Item1 == controllerType.ToString());
+        if (isControllerAdded)
         {
-            { _configuration["StartAssignment"], HandleStart },
-        };
+            throw new InvalidOperationException($"Controller {controllerType} is already added!");
+        }
+        var controllerMethods = controllerType
+            .GetMethods()
+            .Where(m => m.GetCustomAttributes(attributeType, false).Length > 0);
+        TController newController = new TController();
+        foreach (var methodInfo in controllerMethods)
+        {
+            var parameters = methodInfo.GetParameters();
+            if (methodInfo.ReturnType != typeof(Message) 
+                || parameters.FirstOrDefault()?.ParameterType != typeof(Message)
+                || parameters.Length != 1)
+            {
+                continue;
+            }
+
+            var func = (Func<TController, Message, Message>)Delegate
+                    .CreateDelegate(typeof(Func<TController, Message, Message>), null, methodInfo)
+                as Func<ControllerBase, Message, Message>;
+            var address = methodInfo.CustomAttributes
+                .FirstOrDefault(a => a.AttributeType == attributeType)?
+                .ConstructorArguments?
+                .FirstOrDefault()
+                .Value?.ToString() ?? throw new InvalidOperationException("Controller contains invalid attributes!");
+            _endpoints.Add(address, (controllerType.ToString(), newController, func));
+            }
         return this;
     }
 
@@ -62,7 +96,7 @@ public class TcpHost
         {
             sListener.Bind(ipEndPoint);
             sListener.Listen(10);
-            Handle(ipEndPoint, sListener);
+            HandleRequest(ipEndPoint, sListener);
         }
         catch (Exception ex)
         {
@@ -72,7 +106,7 @@ public class TcpHost
         return this;
     }
 
-    private void Handle(IPEndPoint ipEndPoint, Socket sListener)
+    private void HandleRequest(IPEndPoint ipEndPoint, Socket sListener)
     {
         while (true)
         {
@@ -88,7 +122,7 @@ public class TcpHost
             if (receivedMessage is not null 
                 && _endpoints.TryGetValue(receivedMessage.Address, out var requestHandler))
             {
-                response = requestHandler(receivedMessage);
+                response = requestHandler.Item3(requestHandler.Item2, receivedMessage);
             }
             
             Console.WriteLine($"\tGenerated response: {response}");
@@ -102,10 +136,5 @@ public class TcpHost
             socketHandler.Shutdown(SocketShutdown.Both);
             socketHandler.Close();
         }
-    }
-
-    private Message HandleStart(Message request)
-    {
-        throw new NotImplementedException();
     }
 }
