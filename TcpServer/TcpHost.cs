@@ -94,10 +94,11 @@ public class TcpHost
         var controllerMethods = controllerType
             .GetMethods()
             .Where(m => m.GetCustomAttributes(attributeType, false).Length > 0);
-        TController newController = new TController
+        var newController = new TController
         {
             AssignmentsFolderPath = _assignmentsFolderPath,
-            QuestionsTemplatePath = _questionsFilePath
+            QuestionsTemplatePath = _questionsFilePath,
+            Configuration = _configuration
         };
         foreach (var methodInfo in controllerMethods)
         {

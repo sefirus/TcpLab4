@@ -52,4 +52,41 @@ public class AssignmentController: ControllerBase
         };
         return response;
     }
+
+    [ControllerMethod("get")]
+    public Message Get(Message request)
+    {
+        Message response;
+        if (request.Parameters.TryGetValue("assignmentId", out var id))
+        {
+            var assignment = _assignmentRepository.GetById(id);
+            if (assignment is null)
+            {
+                return Message.GetResponseError("Not found!");
+            }
+            response = new Message()
+            {
+                Parameters = new Dictionary<string, string>
+                {
+                    { "id", assignment.Id.ToString() },
+                    {"count", "1"}
+                },
+                Body = assignment
+            };       
+        }
+        else
+        {
+            var assignments = _assignmentRepository.GetAll();
+            response = new Message()
+            {
+                Parameters = new Dictionary<string, string>
+                {
+                    {"count", $"{assignments.Count()}"}
+                },
+                Body = assignments
+            };  
+        }
+
+        return response;
+    }
 }

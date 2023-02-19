@@ -15,4 +15,11 @@ public class ControllerBase
         get => _assignmentsFolderPath;
         set => _assignmentsFolderPath ??= value;
     }
+
+    private Dictionary<string, string>? _configuration;
+    public Dictionary<string, string> Configuration 
+    { 
+        get => _configuration;
+        set => _configuration ??= value;
+    }
 }
