@@ -67,7 +67,7 @@ public class ClientHandler
         return this;
     }
 
-    public ClientHandler Run()
+    public void Run()
     {
         while (true)
         {
