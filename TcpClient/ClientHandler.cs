@@ -9,11 +9,12 @@ namespace TcpClient;
 
 public class ClientHandler
 {
+    private readonly bool _logToConsole;
     private int Port { get; set; }
     private readonly Dictionary<string, string> _configuration;
-    private readonly Dictionary<string, Func<string, Message>> _commands = new(); 
-    
-    private Message StartAssignment(string args)
+    private readonly Dictionary<string, Action<string>> _commands = new();
+
+    private void StartAssignment(string args)
     {
         var request = new Message()
         {
@@ -23,11 +24,11 @@ public class ClientHandler
                 { "assigneeName", "sefirus" }
             }
         };
-        return request;
+        
     }
     
     #region Infrastructure
-    void SendMessage(Message request)
+    private Message SendMessage(Message request)
     {
         Console.OutputEncoding = Encoding.Unicode;
         Console.InputEncoding = Encoding.Unicode;
@@ -42,14 +43,19 @@ public class ClientHandler
         var msg = Encoding.UTF8.GetBytes(message);
         sender.Send(msg);
         var bytesRec = sender.Receive(bytes);
-        Console.WriteLine($"Answer: {Encoding.UTF8.GetString(bytes, 0, bytesRec)}");
+        if (_logToConsole)
+        {
+            Console.WriteLine($"Answer: {Encoding.UTF8.GetString(bytes, 0, bytesRec)}");
+        }
         sender.Shutdown(SocketShutdown.Both);
         sender.Close();
+        return Message.Deserialize(bytes, bytesRec, out _);
     }
-    public ClientHandler(string settingsFilePath)
+    public ClientHandler(string settingsFilePath, bool logToConsole = false)
     {
+        _logToConsole = logToConsole;
         _configuration = JsonHelper.ReadObject<Dictionary<string, string>>(settingsFilePath) 
-            ?? throw new Exception("Cant read settings!");
+                         ?? throw new Exception("Cant read settings!");
         if (!int.TryParse(_configuration["Port"], out var port))
         {
             throw new ArgumentNullException($"Port", "Port you provided is not in correct format!");
@@ -75,8 +81,7 @@ public class ClientHandler
             var command = input?.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
             if (_commands.TryGetValue(command ?? string.Empty, out var handler))
             {
-                var request = handler(command!);
-                SendMessage(request);
+                handler(command!);
             }
             else
             {
