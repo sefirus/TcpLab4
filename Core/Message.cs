@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Core;
 
@@ -12,6 +13,16 @@ public class Message
             Body = message
         };
         return errorMessage;
+    }
+
+    public TBody? GetDeserializedBody<TBody>()
+    {
+        if (Body is not JObject body)
+        {
+            return default;
+        }
+
+        return body.ToObject<TBody>();
     }
 
     public static Message? Deserialize(byte[] bytes, int bytesRec, out string received)

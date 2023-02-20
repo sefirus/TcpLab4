@@ -2,6 +2,8 @@
 using System.Net.Sockets;
 using System.Text;
 using Core;
+using Core.Entities;
+using Core.Exceptions;
 using Core.Helpers;
 using Newtonsoft.Json;
 
@@ -12,19 +14,21 @@ public class ClientHandler
     private readonly bool _logToConsole;
     private int Port { get; set; }
     private readonly Dictionary<string, string> _configuration;
-    private readonly Dictionary<string, Action<string>> _commands = new();
+    private readonly Dictionary<string, Action<Dictionary<string, string> >> _commands = new();
 
-    private void StartAssignment(string args)
+    private void StartAssignment(Dictionary<string, string> args)
     {
+        args.EnsureKeys(Args.AssigneeName);
         var request = new Message()
         {
             Address = "start",
             Parameters = new Dictionary<string, string>()
             {
-                { "assigneeName", "sefirus" }
+                { "assigneeName", args[Args.AssigneeName] }
             }
         };
-        
+        var responseMessage = SendMessage(request);
+        var responseBody = responseMessage.GetDeserializedBody<Assignment>();
     }
     
     #region Infrastructure
@@ -81,7 +85,22 @@ public class ClientHandler
             var command = input?.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
             if (_commands.TryGetValue(command ?? string.Empty, out var handler))
             {
-                handler(command!);
+                try
+                {
+                    var argsString = input.Remove(0, command.Length);
+                    var args = Args.Parse(argsString!);
+                    handler(args);
+                }
+                catch (BadCommandException badCommandException)
+                {
+                    Console.WriteLine("Bad command! Check yor input!");
+                    Console.WriteLine($"\tArg: {badCommandException.Arg}");
+                    if (badCommandException.ArgValue is not null)
+                    {
+                        Console.WriteLine($"\tValue: {badCommandException.ArgValue}");
+                    }
+                    Console.WriteLine($"\tArg: {badCommandException.Message}");
+                }
             }
             else
             {
