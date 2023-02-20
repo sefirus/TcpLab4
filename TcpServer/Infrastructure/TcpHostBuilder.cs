@@ -3,28 +3,26 @@ using System.Net.Sockets;
 using System.Text;
 using Core;
 using Core.Helpers;
-using Newtonsoft.Json;
+using Core.Interfaces;
 
-namespace TcpServer;
+namespace TcpServer.Infrastructure;
 
-public class TcpHost
+public class TcpHostBuilder : ITcpHostBuilder
 {
-    public int Port { get; private set; }
-
+    private int _port;
     private readonly Dictionary<string, (string, ControllerBase, Func<ControllerBase, Message, Message>)> _endpoints =
         new();
 
     private readonly Dictionary<string, string> _configuration;
     private string _questionsFilePath;
     private string _assignmentsFolderPath;
-
-    public TcpHost(string settingsFilePath)
+    public TcpHostBuilder(string settingsFilePath)
     {
         _configuration = JsonHelper.ReadObject<Dictionary<string, string>>(settingsFilePath)
-            ?? throw new Exception("Cant read settings!");
+                         ?? throw new Exception("Cant read settings!");
     }
 
-    public TcpHost AddQuestions(string filePath)
+    public ITcpHostBuilder AddQuestions(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
         {
@@ -40,7 +38,7 @@ public class TcpHost
         return this;
     }
 
-    public TcpHost AddAssignmentsFolder(string folderPath)
+    public ITcpHostBuilder AddAssignmentsFolder(string folderPath)
     {
         if (string.IsNullOrWhiteSpace(folderPath))
         {
@@ -56,18 +54,18 @@ public class TcpHost
         return this;
     }
 
-    public TcpHost InitializeHost()
+    public ITcpHostBuilder InitializeHost()
     {
         if (!int.TryParse(_configuration["Port"], out var port))
         {
             throw new ArgumentNullException($"Port", "Port you provided is not in correct format!");
         }
 
-        Port = port;
+        _port = port;
         return this;
     }
 
-    public TcpHost AddController<TController>() where TController : ControllerBase, new()
+    public ITcpHostBuilder AddController<TController>() where TController : ControllerBase, new()
     {
         var controllerType = typeof(TController);
         var attributeType = typeof(ControllerMethodAttribute);
@@ -111,7 +109,7 @@ public class TcpHost
         return this;
     }
 
-    public TcpHost Run()
+    public ITcpApp Build()
     {
         if (!_endpoints.Any() || _questionsFilePath is null || _assignmentsFolderPath is null)
         {
@@ -123,55 +121,13 @@ public class TcpHost
 
         var ipHost = Dns.GetHostEntry("localhost");
         var ipAddr = ipHost.AddressList[0];
-        var ipEndPoint = new IPEndPoint(ipAddr, Port);
-
-        using var sListener = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-        try
+        var ipEndPoint = new IPEndPoint(ipAddr, _port);
+        var sListener = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        var webApp = new TcpApp()
         {
-            sListener.Bind(ipEndPoint);
-            sListener.Listen(10);
-            while (true) HandleRequest(ipEndPoint, sListener);
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
-
-        return this;
-    }
-
-    private void HandleRequest(IPEndPoint ipEndPoint, Socket sListener)
-    {
-        Console.WriteLine($"Waiting for the connection on {ipEndPoint}");
-        using var socketHandler = sListener.Accept();
-        var bytes = new byte[1024];
-        var bytesRec = socketHandler.Receive(bytes);
-        var receivedMessage = Message.Deserialize(bytes, bytesRec, out var data);
-        var response = Message.GetResponseError("Bad request");
-        if (receivedMessage is not null
-            && _endpoints.TryGetValue(receivedMessage.Address, out var requestHandler))
-        {
-            try
-            {
-                response = requestHandler.Item3(requestHandler.Item2, receivedMessage);
-            } 
-            catch (Exception e)
-            {
-                response.Body = e;
-            }
-        }
-
-        var serializedResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
-        Console.WriteLine($"\tGenerated response: {serializedResponse}");
-        socketHandler.Send(Encoding.UTF8.GetBytes(serializedResponse));
-        if (data.Contains("<TheEnd>"))
-        {
-            Console.WriteLine("Closed connection");
-            throw new Exception("Closed connection");
-        }
-
-        socketHandler.Shutdown(SocketShutdown.Both);
-        socketHandler.Close();
+            SocketListener = sListener,
+            IpEndPoint = ipEndPoint
+        };
+        return webApp;
     }
 }
