@@ -5,10 +5,12 @@ var repoDirectory = Directory.GetParent(Environment.CurrentDirectory)?.Parent?.P
 var settingsPath = $@"{repoDirectory}\Core\Settings.json";
 var questionsPath = $@"{repoDirectory}\Core\Questions.json";
 var assignmentsFolderPath = $@"{repoDirectory}\TcpServer\Assignments";
+
 var webApp = new TcpHostBuilder(settingsPath)
+    .InitializeHost()
     .AddAssignmentsFolder(assignmentsFolderPath)
     .AddQuestions(questionsPath)
     .AddController<AssignmentController>()
-    .InitializeHost()
     .Build();
+
 webApp.Run();    

@@ -9,7 +9,7 @@ namespace TcpServer.Infrastructure;
 
 public class TcpApp : ITcpApp
 {
-    private readonly Dictionary<string, (string, ControllerBase, Func<ControllerBase, Message, Message>)> _endpoints;
+    public Dictionary<string, (string, ControllerBase, Func<ControllerBase, Message, Message>)> Endpoints { get; init; }
     public int Port { get; private set; }
     public IPEndPoint IpEndPoint { get; init; }
     public Socket SocketListener { get; init; }
@@ -20,8 +20,17 @@ public class TcpApp : ITcpApp
         {
             SocketListener.Bind(IpEndPoint);
             SocketListener.Listen(10);
-            while (true) HandleRequest(IpEndPoint, SocketListener);
-
+            while (true)
+            {
+                try
+                {
+                    HandleRequest(IpEndPoint, SocketListener);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
         }
         catch (Exception ex)
         {
@@ -38,7 +47,7 @@ public class TcpApp : ITcpApp
         var receivedMessage = Message.Deserialize(bytes, bytesRec, out var data);
         var response = Message.GetResponseError("Bad request");
         if (receivedMessage is not null
-            && _endpoints.TryGetValue(receivedMessage.Address, out var requestHandler))
+            && Endpoints.TryGetValue(receivedMessage.Address, out var requestHandler))
         {
             try
             {

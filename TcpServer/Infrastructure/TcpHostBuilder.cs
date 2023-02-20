@@ -125,6 +125,7 @@ public class TcpHostBuilder : ITcpHostBuilder
         var sListener = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         var webApp = new TcpApp()
         {
+            Endpoints = _endpoints,
             SocketListener = sListener,
             IpEndPoint = ipEndPoint
         };
