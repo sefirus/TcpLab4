@@ -8,6 +8,11 @@ public class BadCommandException : Exception
         ArgValue = argValue;
     }
 
+    public BadCommandException(string? message, params string[] args) : base(message)
+    {
+        Arg = string.Join(", ", args);;
+    }
+    
     public string Arg { get; }
     public string? ArgValue { get; }
 }

@@ -30,11 +30,6 @@ public class TcpHostBuilder : ITcpHostBuilder
         }
 
         _questionsFilePath = filePath;
-        foreach (var keyValue in _endpoints)
-        {
-            //keyValue.Value.Item2.QuestionsTemplatePath ??= _questionsFilePath;
-        }
-
         return this;
     }
 
@@ -46,11 +41,6 @@ public class TcpHostBuilder : ITcpHostBuilder
         }
 
         _assignmentsFolderPath = folderPath;
-        foreach (var keyValue in _endpoints)
-        {
-            //keyValue.Value.Item2.AssignmentsFolderPath ??= _assignmentsFolderPath;
-        }
-
         return this;
     }
 

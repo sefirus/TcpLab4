@@ -1,26 +1,16 @@
-﻿using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using Core;
+﻿using Core;
 using Core.Entities;
-using Core.Enums;
 using Core.Exceptions;
-using Core.Helpers;
-using Newtonsoft.Json;
 using TcpClient.Utils;
 
 namespace TcpClient;
 
-public class ClientHandler
+public partial class ClientHandler
 {
-    private readonly bool _logToConsole;
-    private int Port { get; set; }
-    private readonly Dictionary<string, string> _configuration;
-    private readonly Dictionary<string, Action<Dictionary<string, string> >> _commands = new();
-
+    private Assignment? _currentAssignment;
     private void StartAssignment(Dictionary<string, string> args)
     {
-        args.EnsureKeys(Args.AssigneeName);
+        args.EnsureAllKeys(Args.AssigneeName);
         var request = new Message()
         {
             Address = "start",
@@ -31,90 +21,45 @@ public class ClientHandler
         };
         var responseMessage = SendMessage(request);
         var responseBody = responseMessage.GetDeserializedBody<Assignment>();
+        _currentAssignment = responseBody;
         Print.Assignment(responseBody);
     }
+
+    private Question GetQuestion(Dictionary<string, string> args)
+    {
+        if (args.TryGetValue(Args.QuestionId, out var id)
+            && Guid.TryParse(id, out var guid))
+        {
+            var question = _currentAssignment?
+                .Questions.FirstOrDefault(q => q.Id == guid);
+            if (question is null)
+            {
+                throw new BadCommandException("Question does not exist!", Args.QuestionId, id);
+            }
+
+            return question;
+        }
+
+        if (args.TryGetValue(Args.QuestionIndex, out var indexString)
+            && int.TryParse(indexString, out int index))
+        {
+            var question = _currentAssignment?
+                .Questions.ElementAtOrDefault(index);
+            if (question is null)
+            {
+                throw new BadCommandException("Question does not exist!", Args.QuestionIndex, indexString);
+            }
+
+            return question;
+        }
+
+        throw new BadCommandException("Bad value for argument!", args: new []{Args.QuestionId, Args.QuestionIndex});
+}
     
-    #region Infrastructure
-    private Message SendMessage(Message request)
+    public void Answer(Dictionary<string, string> args)
     {
-        Console.OutputEncoding = Encoding.Unicode;
-        Console.InputEncoding = Encoding.Unicode;
-        var bytes = new byte[4096];
-
-        var ipHost = Dns.GetHostEntry("localhost");
-        var ipAddr = ipHost.AddressList[0];
-        var ipEndPoint = new IPEndPoint(ipAddr, Port);
-        var sender = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-        sender.Connect(ipEndPoint);
-        var message = JsonConvert.SerializeObject(request);
-        var msg = Encoding.UTF8.GetBytes(message);
-        sender.Send(msg);
-        var bytesRec = sender.Receive(bytes);
-        if (_logToConsole)
-        {
-            Console.WriteLine($"Answer: {Encoding.UTF8.GetString(bytes, 0, bytesRec)}");
-        }
-        sender.Shutdown(SocketShutdown.Both);
-        sender.Close();
-        return Message.Deserialize(bytes, bytesRec, out _);
+        args.EnsureOnlyOneKey(Args.QuestionId, Args.QuestionIndex);
+        args.EnsureOnlyOneKey(Args.OptionId, Args.OptionIndex);
+        var questionId = GetQuestion(args).Id;
     }
-    public ClientHandler(string settingsFilePath, bool logToConsole = false)
-    {
-        _logToConsole = logToConsole;
-        _configuration = JsonHelper.ReadObject<Dictionary<string, string>>(settingsFilePath) 
-                         ?? throw new Exception("Cant read settings!");
-        if (!int.TryParse(_configuration["Port"], out var port))
-        {
-            throw new ArgumentNullException($"Port", "Port you provided is not in correct format!");
-        }
-
-        Port = port;
-    }
-
-    public ClientHandler InitializeCommands()
-    {
-        _commands.Add(RoutesEnum.StartNewAssignment, StartAssignment);
-        _commands.Add(RoutesEnum.AnswerQuestion, StartAssignment);
-        _commands.Add(RoutesEnum.FinishAssignment, StartAssignment);
-        _commands.Add(RoutesEnum.GetAssignments, StartAssignment);
-        _commands.Add(RoutesEnum.Help, StartAssignment);
-        return this;
-    }
-
-    public void Run()
-    {
-        Print.Line();
-        Print.Help();
-        while (true)
-        {
-            Print.Line();
-            var input = Console.ReadLine();
-            var command = input?.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-            if (_commands.TryGetValue(command ?? string.Empty, out var handler))
-            {
-                try
-                {
-                    var argsString = input.Remove(0, command.Length);
-                    var args = Args.Parse(argsString!);
-                    handler(args);
-                }
-                catch (BadCommandException badCommandException)
-                {
-                    Console.WriteLine("Bad command! Check yor input!");
-                    Console.WriteLine($"\tArg: {badCommandException.Arg}");
-                    if (badCommandException.ArgValue is not null)
-                    {
-                        Console.WriteLine($"\tValue: {badCommandException.ArgValue}");
-                    }
-                    Console.WriteLine($"\tArg: {badCommandException.Message}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Wrong command!");
-            }
-        }
-    }
-    #endregion
-
 }

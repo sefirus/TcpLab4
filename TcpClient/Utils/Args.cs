@@ -61,20 +61,38 @@ public static class Args
         return result;
     }
 
-    public static void EnsureKeys(this Dictionary<string, string> dictionary, params string[] requiredKeysNames)
+    public static void EnsureAllKeys(this Dictionary<string, string> dictionary, params string[] requiredKeysNames)
     {
         foreach (var param in requiredKeysNames)
         {
-            if (!dictionary.TryGetValue(param, out _))
+            if (!dictionary.ContainsKey(param))
             {
                 throw new BadCommandException($"{param} Is required argument!", param);
             }
         }
     }
+    
+    public static void EnsureOnlyOneKey(this Dictionary<string, string> dictionary, params string[] keysNames)
+    {
+        var matchCount = 0;
+        foreach (var param in keysNames)
+        {
+            if (dictionary.ContainsKey(param))
+            {
+                matchCount++;
+            }
+        }
+
+        if (matchCount != 1)
+        {
+            throw new BadCommandException($"You must pass only one of the args!", string.Concat(dictionary.Keys + ", "));
+        }
+    }
+    
     public static Dictionary<string, string> Parse(string argString, params string[] requiredArgsNames)
     {
         var parsed = Parse(argString);
-        parsed.EnsureKeys(requiredArgsNames);
+        parsed.EnsureAllKeys(requiredArgsNames);
         return parsed;
     }
 
