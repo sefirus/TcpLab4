@@ -25,10 +25,13 @@ public class Message
         return body.ToObject<TBody>();
     }
 
-    public static Message? Deserialize(byte[] bytes, int bytesRec, out string received)
+    public static Message? Deserialize(byte[] bytes, int bytesRec, out string received, bool logToConsole = false)
     {
         received = Encoding.UTF8.GetString(bytes, 0, bytesRec);
-        Console.WriteLine($"\tReceived message: {received}");
+        if(logToConsole)
+        {
+            Console.WriteLine($"\tReceived message: {received}");
+        }   
         var receivedMessage = JsonConvert.DeserializeObject<Message>(received);
         return receivedMessage;
     }

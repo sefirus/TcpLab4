@@ -1,6 +1,7 @@
-﻿using Core.Exceptions;
+﻿using System.Collections.ObjectModel;
+using Core.Exceptions;
 
-namespace Core.Helpers;
+namespace TcpClient.Utils;
 
 public static class Args
 {
@@ -10,7 +11,9 @@ public static class Args
     public const string QuestionId = "QuestionId";
     public const string OptionIndex = "OptionIndex";
     public const string OptionId = "OptionId";
-    private static readonly Dictionary<string, string> AliasMap = new()
+    public const string Secret = "Secret";
+    private static readonly IReadOnlyDictionary<string, string> AliasMap 
+        = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>()
     {
         { "-n", AssigneeName },
         { "--Name", AssigneeName },
@@ -24,7 +27,9 @@ public static class Args
         { "--OptionIndex", OptionIndex },
         { "-oid", OptionId },
         { "--OptionId", OptionId },
-    };
+        { "-s", Secret },
+        { "--Secret", Secret },
+    });
     
     public static Dictionary<string, string> Parse(string argString)
     {

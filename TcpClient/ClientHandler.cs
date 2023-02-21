@@ -3,9 +3,11 @@ using System.Net.Sockets;
 using System.Text;
 using Core;
 using Core.Entities;
+using Core.Enums;
 using Core.Exceptions;
 using Core.Helpers;
 using Newtonsoft.Json;
+using TcpClient.Utils;
 
 namespace TcpClient;
 
@@ -29,6 +31,7 @@ public class ClientHandler
         };
         var responseMessage = SendMessage(request);
         var responseBody = responseMessage.GetDeserializedBody<Assignment>();
+        Print.Assignment(responseBody);
     }
     
     #region Infrastructure
@@ -70,17 +73,21 @@ public class ClientHandler
 
     public ClientHandler InitializeCommands()
     {
-        _commands.Add("new", StartAssignment);
-        _commands.Add("ans", StartAssignment);
-        _commands.Add("ext", StartAssignment);
-        _commands.Add("get", StartAssignment);
+        _commands.Add(RoutesEnum.StartNewAssignment, StartAssignment);
+        _commands.Add(RoutesEnum.AnswerQuestion, StartAssignment);
+        _commands.Add(RoutesEnum.FinishAssignment, StartAssignment);
+        _commands.Add(RoutesEnum.GetAssignments, StartAssignment);
+        _commands.Add(RoutesEnum.Help, StartAssignment);
         return this;
     }
 
     public void Run()
     {
+        Print.Line();
+        Print.Help();
         while (true)
         {
+            Print.Line();
             var input = Console.ReadLine();
             var command = input?.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
             if (_commands.TryGetValue(command ?? string.Empty, out var handler))
