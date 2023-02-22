@@ -42,7 +42,7 @@ public class TcpApp : ITcpApp
     {
         Console.WriteLine($"Waiting for the connection on {ipEndPoint}");
         using var socketHandler = sListener.Accept();
-        var bytes = new byte[1024];
+        var bytes = new byte[8192];
         var bytesRec = socketHandler.Receive(bytes);
         var receivedMessage = Message.Deserialize(bytes, bytesRec, out var data);
         var response = Message.GetResponseError("Bad request");

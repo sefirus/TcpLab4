@@ -45,7 +45,7 @@ public partial class ClientHandler
             && int.TryParse(indexString, out int index))
         {
             var question = _currentAssignment?
-                .Questions.ElementAtOrDefault(index);
+                .Questions.ElementAtOrDefault(index + 1);
             if (question is null)
             {
                 throw new BadCommandException("Question does not exist!", Args.QuestionIndex, indexString);
@@ -77,7 +77,7 @@ public partial class ClientHandler
             && int.TryParse(indexString, out int index))
         {
             var option = question?.Options
-                .ElementAtOrDefault(index);
+                .ElementAtOrDefault(index + 1);
             if (option is null)
             {
                 throw new BadCommandException("Option does not exist!", Args.OptionId, id);

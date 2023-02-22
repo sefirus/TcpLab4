@@ -125,6 +125,10 @@ public class AssignmentController: ControllerBase
 
         question.ChosenAnswerId = optionGuid;
         question.ChosenAnswer = question.Options.FirstOrDefault(q => q.Id == optionGuid);
+        if (assignment.Questions.All(q => q.ChosenAnswerId != default))
+        {
+            assignment.EndDate = DateTimeOffset.UtcNow;
+        }
         AssignmentRepository.Update(assignment);
         var response = new Message()
         {

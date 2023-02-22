@@ -6,19 +6,25 @@ public class Print
 {
     private static string PrintAssignment(Assignment assignment, int indentLevel = 0)
     {
+        var isFinished = assignment.EndDate != default;
         var indent = new string(' ', indentLevel * 2);
         var result = $"{indent}AssigneeName: {assignment.AssigneeName}," + Environment.NewLine;
         result += $"{indent}StartDate: {assignment.StartDate}," + Environment.NewLine;
         result += $"{indent}Questions: [" + Environment.NewLine;
         foreach (var question in assignment.Questions)
         {
-            result += $"{PrintQuestion(question, indentLevel + 2)}";
+            result += $"{PrintQuestion(question, indentLevel + 2, isFinished)}";
         }
         result += $"{indent}    ]" + Environment.NewLine;
+        if (isFinished)
+        {
+            var correctAnswers = assignment.Questions.Count(q => q.ChosenAnswerId == q.CorrectAnswerId);
+            result += $"The score is {correctAnswers} / {assignment.Questions.Count}" + Environment.NewLine;
+        }
         return result;
     }
 
-    private static string PrintQuestion(Question question, int indentLevel = 0)
+    private static string PrintQuestion(Question question, int indentLevel = 0, bool isFinished = false)
     {
         var indent = new string(' ', indentLevel * 2);
         var result = $"{indent}  @ Id: {question.Id}," + Environment.NewLine;
@@ -26,16 +32,20 @@ public class Print
         result += $"{indent}    Options: [" + Environment.NewLine;
         foreach (var option in question.Options)
         {
-            result += $"{PrintOption(option, indentLevel + 2, question.ChosenAnswerId == option.Id)}";
+            var idLevel = indentLevel + 2;
+            var isChosen = question.ChosenAnswerId == option.Id;
+            var isCorrect = isFinished && question.CorrectAnswerId == option.Id;
+            result += $"{PrintOption(option, idLevel, isChosen, isCorrect)}";
         }
         result += $"{indent}    ]" + Environment.NewLine;
         return result;
     }
 
-    private static string PrintOption(Option option, int indentLevel = 0, bool isChosen = false)
+    private static string PrintOption(Option option, int indentLevel = 0, bool isChosen = false, bool isCorrect = false)
     {
         var indent = new string(' ', indentLevel * 2);
-        var tab = isChosen ? "==> " : "  # ";
+        var tab = isChosen ? "==>" : " # ";
+        tab = isCorrect ? $"&{tab}" : $" {tab}";
         var result = $"{indent}{tab}Id: {option.Id}," + Environment.NewLine;
         result += $"{indent}    Content: {option.Content}" + Environment.NewLine;
         return result;
