@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Entities;
+using Core.Enums;
 using Core.Exceptions;
 using TcpClient.Utils;
 
@@ -13,10 +14,10 @@ public partial class ClientHandler
         args.EnsureAllKeys(Args.AssigneeName);
         var request = new Message()
         {
-            Address = "start",
+            Address = RoutesEnum.StartNewAssignment,
             Parameters = new Dictionary<string, string>()
             {
-                { "assigneeName", args[Args.AssigneeName] }
+                { Args.AssigneeName, args[Args.AssigneeName] }
             }
         };
         var responseMessage = SendMessage(request);
@@ -55,11 +56,62 @@ public partial class ClientHandler
 
         throw new BadCommandException("Bad value for argument!", args: new []{Args.QuestionId, Args.QuestionIndex});
 }
+    private Option GetOption(Guid questionId, Dictionary<string, string> args)
+    {
+        var question = _currentAssignment?
+            .Questions.FirstOrDefault(q => q.Id == questionId);
+        if (args.TryGetValue(Args.OptionId, out var id)
+            && Guid.TryParse(id, out var guid))
+        {
+            var option = question?.Options
+                .FirstOrDefault(o => o.Id == guid);
+            if (option is null)
+            {
+                throw new BadCommandException("Option does not exist!", Args.OptionId, id);
+            }
+
+            return option;
+        }
+
+        if (args.TryGetValue(Args.OptionId, out var indexString)
+            && int.TryParse(indexString, out int index))
+        {
+            var option = question?.Options
+                .ElementAtOrDefault(index);
+            if (option is null)
+            {
+                throw new BadCommandException("Option does not exist!", Args.OptionId, id);
+            }
+
+            return option;
+        }
+
+        throw new BadCommandException("Bad value for argument!", args: new []{Args.OptionId, Args.OptionIndex});
+    }
     
     public void Answer(Dictionary<string, string> args)
     {
+        if (_currentAssignment is null)
+        {
+            throw new BadCommandException("Start the assignment first!");
+        }
         args.EnsureOnlyOneKey(Args.QuestionId, Args.QuestionIndex);
         args.EnsureOnlyOneKey(Args.OptionId, Args.OptionIndex);
-        var questionId = GetQuestion(args).Id;
+        var question = GetQuestion(args);
+        var option = GetOption(question.Id, args);
+        var request = new Message()
+        {
+            Address = RoutesEnum.AnswerQuestion,
+            Parameters = new Dictionary<string, string>()
+            {
+                { Args.AssignmentId, _currentAssignment.Id.ToString() },
+                { Args.QuestionId, question.Id.ToString() },
+                { Args.OptionId, option.Id.ToString() }
+            }
+        };
+        var responseMessage = SendMessage(request);
+        var responseBody = responseMessage.GetDeserializedBody<Assignment>();
+        _currentAssignment = responseBody;
+        Print.Assignment(responseBody);
     }
 }

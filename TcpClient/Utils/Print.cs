@@ -4,8 +4,7 @@ namespace TcpClient.Utils;
 
 public class Print
 {
-  
-  private static string PrintAssignment(Assignment assignment, int indentLevel = 0)
+    private static string PrintAssignment(Assignment assignment, int indentLevel = 0)
     {
         var indent = new string(' ', indentLevel * 2);
         var result = $"{indent}AssigneeName: {assignment.AssigneeName}," + Environment.NewLine;
@@ -27,16 +26,17 @@ public class Print
         result += $"{indent}    Options: [" + Environment.NewLine;
         foreach (var option in question.Options)
         {
-            result += $"{PrintOption(option, indentLevel + 2)}";
+            result += $"{PrintOption(option, indentLevel + 2, question.ChosenAnswerId == option.Id)}";
         }
         result += $"{indent}    ]" + Environment.NewLine;
         return result;
     }
 
-    private static string PrintOption(Option option, int indentLevel = 0)
+    private static string PrintOption(Option option, int indentLevel = 0, bool isChosen = false)
     {
         var indent = new string(' ', indentLevel * 2);
-        var result = $"{indent}  # Id: {option.Id}," + Environment.NewLine;
+        var tab = isChosen ? "==> " : "  # ";
+        var result = $"{indent}{tab}: {option.Id}," + Environment.NewLine;
         result += $"{indent}    Content: {option.Content}" + Environment.NewLine;
         return result;
     }
