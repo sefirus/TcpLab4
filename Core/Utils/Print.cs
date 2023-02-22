@@ -1,6 +1,6 @@
 ﻿using Core.Entities;
 
-namespace TcpClient.Utils;
+namespace Core.Utils;
 
 public class Print
 {
@@ -36,7 +36,7 @@ public class Print
     {
         var indent = new string(' ', indentLevel * 2);
         var tab = isChosen ? "==> " : "  # ";
-        var result = $"{indent}{tab}: {option.Id}," + Environment.NewLine;
+        var result = $"{indent}{tab}Id: {option.Id}," + Environment.NewLine;
         result += $"{indent}    Content: {option.Content}" + Environment.NewLine;
         return result;
     }

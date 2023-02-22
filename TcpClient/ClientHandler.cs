@@ -2,7 +2,7 @@
 using Core.Entities;
 using Core.Enums;
 using Core.Exceptions;
-using TcpClient.Utils;
+using Core.Utils;
 
 namespace TcpClient;
 
@@ -73,7 +73,7 @@ public partial class ClientHandler
             return option;
         }
 
-        if (args.TryGetValue(Args.OptionId, out var indexString)
+        if (args.TryGetValue(Args.OptionIndex, out var indexString)
             && int.TryParse(indexString, out int index))
         {
             var option = question?.Options

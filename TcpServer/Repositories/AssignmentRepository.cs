@@ -43,4 +43,16 @@ public class AssignmentRepository
             yield return result;   
         }
     }
+
+    public Assignment Update(Assignment assignment)
+    {
+        var filePath = Directory
+            .GetFiles(_folderPath)
+            .FirstOrDefault(f => f.Contains(assignment.Id.ToString()))
+            ?? $@"{_folderPath}\Assignment_{DateTime.UtcNow.Ticks}_{assignment.Id}.json";
+
+        var json = JsonConvert.SerializeObject(assignment, Formatting.Indented);
+        File.WriteAllText(filePath, json);
+        return assignment;
+    }
 }

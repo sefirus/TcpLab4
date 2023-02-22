@@ -1,6 +1,8 @@
 ﻿using Core;
 using Core.Entities;
+using Core.Enums;
 using Core.Extensions;
+using Core.Utils;
 using TcpServer.Repositories;
 using TcpServer.Utilities;
 
@@ -26,10 +28,10 @@ public class AssignmentController: ControllerBase
         return _questions;
     }
     
-    [ControllerMethod("start")]
+    [ControllerMethod(RoutesEnum.StartNewAssignment)]
     public Message Start(Message request)
     {
-        var assignee = request.Parameters["assigneeName"];
+        var assignee = request.Parameters[Args.AssigneeName];
         var questions = GetQuestions().Shuffle().Take(3);
         var newAssignment = new Assignment()
         {
@@ -50,7 +52,7 @@ public class AssignmentController: ControllerBase
         return response;
     }
 
-    [ControllerMethod("get")]
+    [ControllerMethod(RoutesEnum.GetAssignments)]
     public Message Get(Message request)
     {
         var response = Message.GetResponseError("Wrong secret");
@@ -59,7 +61,7 @@ public class AssignmentController: ControllerBase
             return response;
         }
         
-        if (request.Parameters.TryGetValue("assignmentId", out var id))
+        if (request.Parameters.TryGetValue(Args.AssignmentId, out var id))
         {
             var assignment = AssignmentRepository.GetById(id);
             if (assignment is null)
@@ -71,7 +73,7 @@ public class AssignmentController: ControllerBase
                 Parameters = new Dictionary<string, string>
                 {
                     { "id", assignment.Id.ToString() },
-                    {"count", "1"}
+                    { "count", "1" }
                 },
                 Body = assignment
             };       
@@ -83,7 +85,7 @@ public class AssignmentController: ControllerBase
             {
                 Parameters = new Dictionary<string, string>
                 {
-                    {"count", $"{assignments.Count()}"}
+                    { "count", $"{assignments.Count()}" }
                 },
                 Body = assignments
             };  
@@ -91,4 +93,48 @@ public class AssignmentController: ControllerBase
 
         return response;
     }
+
+    [ControllerMethod(RoutesEnum.AnswerQuestion)]
+    public Message Answer(Message request)
+    {
+        if (!request.Parameters.ContainsKey(Args.AssignmentId))
+        {
+            return Message.GetResponseError("Request does not contain AssignmentId!");
+        }
+
+        var assignment = AssignmentRepository.GetById(request.Parameters[Args.AssignmentId]);
+        if (assignment is null || assignment.EndDate != default)
+        {
+            return Message.GetResponseError("No active assignment with such Id!");
+        }
+
+        if (!request.Parameters.TryGetValue(Args.QuestionId, out var questionId)
+            || !Guid.TryParse(questionId, out var questionGuid)
+            || !assignment.Questions.Any(q => q.Id == questionGuid))
+        {
+            return Message.GetResponseError("Bad request!");
+        }
+
+        var question = assignment.Questions.First(q => q.Id == questionGuid);
+        if (!request.Parameters.TryGetValue(Args.OptionId, out var optionId)
+            || !Guid.TryParse(optionId, out var optionGuid)
+            || !question.Options.Any(q => q.Id == optionGuid))
+        {
+            return Message.GetResponseError("Bad request!");
+        }
+
+        question.ChosenAnswerId = optionGuid;
+        question.ChosenAnswer = question.Options.FirstOrDefault(q => q.Id == optionGuid);
+        AssignmentRepository.Update(assignment);
+        var response = new Message()
+        {
+            Parameters = new Dictionary<string, string>
+            {
+                { "id", assignment.Id.ToString() }
+            },
+            Body = assignment
+        };
+        return response;
+    }
+    
 }

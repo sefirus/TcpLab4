@@ -5,8 +5,8 @@ using Core;
 using Core.Enums;
 using Core.Exceptions;
 using Core.Helpers;
+using Core.Utils;
 using Newtonsoft.Json;
-using TcpClient.Utils;
 
 namespace TcpClient;
 
@@ -58,7 +58,7 @@ public partial class ClientHandler
     public ClientHandler InitializeCommands()
     {
         _commands.Add(RoutesEnum.StartNewAssignment, StartAssignment);
-        _commands.Add(RoutesEnum.AnswerQuestion, StartAssignment);
+        _commands.Add(RoutesEnum.AnswerQuestion, Answer);
         _commands.Add(RoutesEnum.FinishAssignment, StartAssignment);
         _commands.Add(RoutesEnum.GetAssignments, StartAssignment);
         _commands.Add(RoutesEnum.Help, StartAssignment);

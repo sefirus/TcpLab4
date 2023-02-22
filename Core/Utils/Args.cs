@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using Core.Exceptions;
 
-namespace TcpClient.Utils;
+namespace Core.Utils;
 
 public static class Args
 {
