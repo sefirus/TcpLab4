@@ -17,12 +17,12 @@ public class Message
 
     public TBody? GetDeserializedBody<TBody>()
     {
-        if (Body is not JObject body)
+        return Body switch
         {
-            return default;
-        }
-
-        return body.ToObject<TBody>();
+            JObject body => body.ToObject<TBody>(),
+            JArray bodyArray => bodyArray.ToObject<TBody>(),
+            _ => default
+        };
     }
 
     public static Message? Deserialize(byte[] bytes, int bytesRec, out string received, bool logToConsole = false)

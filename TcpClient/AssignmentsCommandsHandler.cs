@@ -117,5 +117,40 @@ public class AssignmentsCommandsHandler : CommandHandlerBase
         var responseBody = responseMessage.GetDeserializedBody<Assignment>();
         _currentAssignment = responseBody;
         return Print.Assignment(responseBody);
-    } 
+    }
+
+    [HandlerMethod(Commands.GetAssignments)]
+    public string Get(Dictionary<string, string> args)
+    {
+        args.EnsureAllKeys(Args.Secret);
+        var request = new Message()
+        {
+            Address = Commands.GetAssignments,
+            Parameters = new Dictionary<string, string>()
+            {
+                { Args.Secret, args[Args.Secret] },
+            }
+        };
+        if (args.TryGetValue(Args.AssignmentId, out var id)
+            && Guid.TryParse(id, out var guid))
+        {
+            request.Parameters.Add(Args.AssignmentId, guid.ToString());
+        }
+        var responseMessage = SendMessage(request);
+        if (id is not null)
+        {
+            var responseBody = responseMessage.GetDeserializedBody<Assignment>();
+            return Print.Assignment(responseBody);
+        }
+        else
+        {            
+            var responseBody = responseMessage.GetDeserializedBody<List<Assignment>>();
+            var result = string.Empty;
+            foreach (var assignment in responseBody)
+            {
+                result += Print.Assignment(assignment) + Environment.NewLine;
+            }
+            return result;
+        }
+    }
 }

@@ -75,6 +75,10 @@ public class TcpHostBuilder : BuilderBase<TcpHostBuilder, ControllerBase, Messag
         {
             throw new InvalidOperationException("Initialize data first!");
         }
+        foreach (var pair in Endpoints)
+        {
+            pair.Value.Item2.Configuration = _configuration;
+        }
 
         Console.OutputEncoding = Encoding.Unicode;
         Console.InputEncoding = Encoding.Unicode;

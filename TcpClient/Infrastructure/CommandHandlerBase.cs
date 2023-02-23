@@ -13,7 +13,7 @@ public class CommandHandlerBase
     {
         Console.OutputEncoding = Encoding.Unicode;
         Console.InputEncoding = Encoding.Unicode;
-        var bytes = new byte[8192];
+        var bytes = new byte[8192000];
 
         var ipHost = Dns.GetHostEntry("localhost");
         var ipAddr = ipHost.AddressList[0];

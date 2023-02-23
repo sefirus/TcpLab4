@@ -47,7 +47,7 @@ public class AssignmentController: ControllerBase
     public Message Get(Message request)
     {
         var response = Message.GetResponseError("Wrong secret");
-        if (!request.Parameters.TryGetValue("secret", out var s) || s != Configuration["ClientSecret"])
+        if (!request.Parameters.TryGetValue(Args.Secret, out var s) || s != Configuration["AccessSecret"])
         {
             return response;
         }
