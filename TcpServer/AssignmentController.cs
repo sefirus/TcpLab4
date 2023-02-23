@@ -28,7 +28,7 @@ public class AssignmentController: ControllerBase
         return _questions;
     }
     
-    [ControllerMethod(RoutesEnum.StartNewAssignment)]
+    [ControllerMethod(Commands.StartNewAssignment)]
     public Message Start(Message request)
     {
         var assignee = request.Parameters[Args.AssigneeName];
@@ -52,7 +52,7 @@ public class AssignmentController: ControllerBase
         return response;
     }
 
-    [ControllerMethod(RoutesEnum.GetAssignments)]
+    [ControllerMethod(Commands.GetAssignments)]
     public Message Get(Message request)
     {
         var response = Message.GetResponseError("Wrong secret");
@@ -94,7 +94,7 @@ public class AssignmentController: ControllerBase
         return response;
     }
 
-    [ControllerMethod(RoutesEnum.AnswerQuestion)]
+    [ControllerMethod(Commands.AnswerQuestion)]
     public Message Answer(Message request)
     {
         if (!request.Parameters.ContainsKey(Args.AssignmentId))

@@ -57,11 +57,11 @@ public partial class ClientHandler
 
     public ClientHandler InitializeCommands()
     {
-        _commands.Add(RoutesEnum.StartNewAssignment, StartAssignment);
-        _commands.Add(RoutesEnum.AnswerQuestion, Answer);
-        _commands.Add(RoutesEnum.FinishAssignment, StartAssignment);
-        _commands.Add(RoutesEnum.GetAssignments, StartAssignment);
-        _commands.Add(RoutesEnum.Help, StartAssignment);
+        _commands.Add(Commands.StartNewAssignment, StartAssignment);
+        _commands.Add(Commands.AnswerQuestion, Answer);
+        _commands.Add(Commands.FinishAssignment, StartAssignment);
+        _commands.Add(Commands.GetAssignments, StartAssignment);
+        _commands.Add(Commands.Help, StartAssignment);
         return this;
     }
 

@@ -14,7 +14,7 @@ public partial class ClientHandler
         args.EnsureAllKeys(Args.AssigneeName);
         var request = new Message()
         {
-            Address = RoutesEnum.StartNewAssignment,
+            Address = Commands.StartNewAssignment,
             Parameters = new Dictionary<string, string>()
             {
                 { Args.AssigneeName, args[Args.AssigneeName] }
@@ -101,7 +101,7 @@ public partial class ClientHandler
         var option = GetOption(question.Id, args);
         var request = new Message()
         {
-            Address = RoutesEnum.AnswerQuestion,
+            Address = Commands.AnswerQuestion,
             Parameters = new Dictionary<string, string>()
             {
                 { Args.AssignmentId, _currentAssignment.Id.ToString() },
@@ -113,5 +113,5 @@ public partial class ClientHandler
         var responseBody = responseMessage.GetDeserializedBody<Assignment>();
         _currentAssignment = responseBody;
         Print.Assignment(responseBody);
-    }
+    } 
 }

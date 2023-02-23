@@ -1,6 +1,6 @@
 ﻿namespace Core.Enums;
 
-public class RoutesEnum
+public static class Commands
 {
     public const string StartNewAssignment = "start";
     public const string AnswerQuestion = "answer";
