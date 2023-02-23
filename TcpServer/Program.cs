@@ -8,9 +8,9 @@ var assignmentsFolderPath = $@"{repoDirectory}\TcpServer\Assignments";
 
 var webApp = new TcpHostBuilder(settingsPath)
     .InitializeHost()
+    .AddHandler<AssignmentController>()
     .AddAssignmentsFolder(assignmentsFolderPath)
     .AddQuestions(questionsPath)
-    .AddController<AssignmentController>()
     .Build();
 
 webApp.Run();    

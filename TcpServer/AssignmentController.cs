@@ -3,36 +3,27 @@ using Core.Entities;
 using Core.Enums;
 using Core.Extensions;
 using Core.Utils;
+using TcpServer.Infrastructure;
 using TcpServer.Repositories;
-using TcpServer.Utilities;
 
 namespace TcpServer;
 
 public class AssignmentController: ControllerBase
 {
-    private List<Question> _questions = new();
     private AssignmentRepository? _assignmentRepository;
+    private QuestionsRepository? _questionsRepository;
 
     private AssignmentRepository AssignmentRepository => 
         _assignmentRepository ??= new AssignmentRepository(AssignmentsFolderPath);
-
-    private List<Question> GetQuestions()
-    {
-        if (!_questions.Any())
-        {
-            _questions = new ListGetter<Question>()
-                .SetFilePath(QuestionsTemplatePath)
-                .GetEntities();
-        }
-
-        return _questions;
-    }
     
-    [ControllerMethod(RoutesEnum.StartNewAssignment)]
+    private QuestionsRepository QuestionsRepository => 
+        _questionsRepository ??= new QuestionsRepository(QuestionsTemplatePath);
+
+    [HandlerMethod(Commands.StartNewAssignment)]
     public Message Start(Message request)
     {
         var assignee = request.Parameters[Args.AssigneeName];
-        var questions = GetQuestions().Shuffle().Take(3);
+        var questions = QuestionsRepository.GetAll().Shuffle().Take(3);
         var newAssignment = new Assignment()
         {
             Id = Guid.NewGuid(),
@@ -52,7 +43,7 @@ public class AssignmentController: ControllerBase
         return response;
     }
 
-    [ControllerMethod(RoutesEnum.GetAssignments)]
+    [HandlerMethod(Commands.GetAssignments)]
     public Message Get(Message request)
     {
         var response = Message.GetResponseError("Wrong secret");
@@ -94,7 +85,7 @@ public class AssignmentController: ControllerBase
         return response;
     }
 
-    [ControllerMethod(RoutesEnum.AnswerQuestion)]
+    [HandlerMethod(Commands.AnswerQuestion)]
     public Message Answer(Message request)
     {
         if (!request.Parameters.ContainsKey(Args.AssignmentId))
