@@ -8,7 +8,7 @@ namespace TcpClient.Infrastructure;
 
 public class CommandHandlerBase
 {
-    private int Port { get; set; }
+    public int Port { get; set; }
     protected Message SendMessage(Message request)
     {
         Console.OutputEncoding = Encoding.Unicode;

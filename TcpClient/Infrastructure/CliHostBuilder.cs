@@ -10,7 +10,12 @@ public class CliHostBuilder : BuilderBase<CliHostBuilder, CommandHandlerBase, Di
     private int Port { get; set; }
     private Dictionary<string, string> _configuration;
 
-    public ICliHostBuilder SetConfigurationPath(string filePath)
+    public CliHostBuilder()
+    {
+        _child = this;
+    }
+    
+    public ICliHostBuilder AddConfiguration(string filePath)
     {
         _configuration = JsonHelper.ReadObject<Dictionary<string, string>>(filePath)
                          ?? throw new Exception("Cant read settings!");
@@ -20,8 +25,14 @@ public class CliHostBuilder : BuilderBase<CliHostBuilder, CommandHandlerBase, Di
         }
 
         Port = port;
-        return this;    
+        foreach (var pair in Endpoints)
+        {
+            pair.Value.Item2.Port = Port;
+        }
+
+        return this;
     }
+
     public IApplication Build()
     {
         return new CliApp()

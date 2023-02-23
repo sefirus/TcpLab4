@@ -3,13 +3,16 @@ using Core.Entities;
 using Core.Enums;
 using Core.Exceptions;
 using Core.Utils;
+using TcpClient.Infrastructure;
 
 namespace TcpClient;
 
-public partial class ClientHandler
+public class AssignmentsCommandsHandler : CommandHandlerBase
 {
     private Assignment? _currentAssignment;
-    private void StartAssignment(Dictionary<string, string> args)
+    
+    [HandlerMethod(Commands.StartNewAssignment)]
+    public string StartAssignment(Dictionary<string, string> args)
     {
         args.EnsureAllKeys(Args.AssigneeName);
         var request = new Message()
@@ -23,7 +26,7 @@ public partial class ClientHandler
         var responseMessage = SendMessage(request);
         var responseBody = responseMessage.GetDeserializedBody<Assignment>();
         _currentAssignment = responseBody;
-        Print.Assignment(responseBody);
+        return Print.Assignment(responseBody);
     }
 
     private Question GetQuestion(Dictionary<string, string> args)
@@ -45,7 +48,7 @@ public partial class ClientHandler
             && int.TryParse(indexString, out int index))
         {
             var question = _currentAssignment?
-                .Questions.ElementAtOrDefault(index + 1);
+                .Questions.ElementAtOrDefault(index - 1);
             if (question is null)
             {
                 throw new BadCommandException("Question does not exist!", Args.QuestionIndex, indexString);
@@ -77,7 +80,7 @@ public partial class ClientHandler
             && int.TryParse(indexString, out int index))
         {
             var option = question?.Options
-                .ElementAtOrDefault(index + 1);
+                .ElementAtOrDefault(index - 1);
             if (option is null)
             {
                 throw new BadCommandException("Option does not exist!", Args.OptionId, id);
@@ -89,7 +92,8 @@ public partial class ClientHandler
         throw new BadCommandException("Bad value for argument!", args: new []{Args.OptionId, Args.OptionIndex});
     }
     
-    public void Answer(Dictionary<string, string> args)
+    [HandlerMethod(Commands.AnswerQuestion)]
+    public string Answer(Dictionary<string, string> args)
     {
         if (_currentAssignment is null)
         {
@@ -112,6 +116,6 @@ public partial class ClientHandler
         var responseMessage = SendMessage(request);
         var responseBody = responseMessage.GetDeserializedBody<Assignment>();
         _currentAssignment = responseBody;
-        Print.Assignment(responseBody);
+        return Print.Assignment(responseBody);
     } 
 }

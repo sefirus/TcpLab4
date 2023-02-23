@@ -26,8 +26,8 @@ public abstract class BuilderBase<TChild, THandlerBase, TFuncArg, TFuncReturn>
         foreach (var methodInfo in controllerMethods)
         {
             var parameters = methodInfo.GetParameters();
-            if (methodInfo.ReturnType != typeof(Message)
-                || parameters.FirstOrDefault()?.ParameterType != typeof(Message)
+            if (methodInfo.ReturnType != typeof(TFuncReturn)
+                || parameters.FirstOrDefault()?.ParameterType != typeof(TFuncArg)
                 || parameters.Length != 1)
             {
                 continue;

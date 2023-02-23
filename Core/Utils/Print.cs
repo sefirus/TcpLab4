@@ -106,8 +106,10 @@ public class Print
     }
 
     
-    public static void Assignment(Assignment assignment)
+    public static string Assignment(Assignment assignment)
     {
-        Console.WriteLine(PrintAssignment(assignment));
+        var result = PrintAssignment(assignment);
+        Console.WriteLine(result);
+        return result;
     }
 }
