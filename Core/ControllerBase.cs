@@ -2,8 +2,8 @@
 
 public class ControllerBase
 {
-    public string? QuestionsTemplatePath { get; init; }
-    public string? AssignmentsFolderPath { get; init; }
+    public string? QuestionsTemplatePath { get; set; }
+    public string? AssignmentsFolderPath { get; set; }
 
     private Dictionary<string, string>? _configuration;
     public Dictionary<string, string> Configuration 

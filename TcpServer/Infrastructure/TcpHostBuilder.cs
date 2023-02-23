@@ -3,16 +3,16 @@ using System.Net.Sockets;
 using System.Text;
 using Core;
 using Core.Helpers;
+using Core.Infrastructure;
 using Core.Interfaces;
+using Core.Interfaces.Infrastructure;
 
 namespace TcpServer.Infrastructure;
 
-public class TcpHostBuilder : ITcpHostBuilder
+public class TcpHostBuilder : BuilderBase<TcpHostBuilder, ControllerBase, Message, Message>, ITcpHostBuilder
 {
     private int _port;
-    private readonly Dictionary<string, (string, ControllerBase, Func<ControllerBase, Message, Message>)> _endpoints =
-        new();
-
+    
     private readonly Dictionary<string, string> _configuration;
     private string _questionsFilePath;
     private string _assignmentsFolderPath;
@@ -20,6 +20,7 @@ public class TcpHostBuilder : ITcpHostBuilder
     {
         _configuration = JsonHelper.ReadObject<Dictionary<string, string>>(settingsFilePath)
                          ?? throw new Exception("Cant read settings!");
+        _child = this;
     }
 
     public ITcpHostBuilder AddQuestions(string filePath)
@@ -30,6 +31,10 @@ public class TcpHostBuilder : ITcpHostBuilder
         }
 
         _questionsFilePath = filePath;
+        foreach (var pair in Endpoints)
+        {
+            pair.Value.Item2.QuestionsTemplatePath = _questionsFilePath;
+        }
         return this;
     }
 
@@ -41,6 +46,10 @@ public class TcpHostBuilder : ITcpHostBuilder
         }
 
         _assignmentsFolderPath = folderPath;
+        foreach (var pair in Endpoints)
+        {
+            pair.Value.Item2.AssignmentsFolderPath = _assignmentsFolderPath;
+        }
         return this;
     }
 
@@ -55,53 +64,14 @@ public class TcpHostBuilder : ITcpHostBuilder
         return this;
     }
 
-    public ITcpHostBuilder AddController<TController>() where TController : ControllerBase, new()
+    public new ITcpHostBuilder AddHandler<TController>() where TController : ControllerBase, new()
     {
-        var controllerType = typeof(TController);
-        var attributeType = typeof(ControllerMethodAttribute);
-        var isControllerAdded = _endpoints
-            .Any(c => c.Value.Item1 == controllerType.ToString());
-        if (isControllerAdded)
-        {
-            throw new InvalidOperationException($"Controller {controllerType} is already added!");
-        }
-
-        var controllerMethods = controllerType
-            .GetMethods()
-            .Where(m => m.GetCustomAttributes(attributeType, false).Length > 0);
-        var newController = new TController
-        {
-            AssignmentsFolderPath = _assignmentsFolderPath,
-            QuestionsTemplatePath = _questionsFilePath,
-            Configuration = _configuration
-        };
-        foreach (var methodInfo in controllerMethods)
-        {
-            var parameters = methodInfo.GetParameters();
-            if (methodInfo.ReturnType != typeof(Message)
-                || parameters.FirstOrDefault()?.ParameterType != typeof(Message)
-                || parameters.Length != 1)
-            {
-                continue;
-            }
-            
-            var genericFunc = (Func<TController, Message, Message>)Delegate
-                .CreateDelegate(typeof(Func<TController, Message, Message>), null, methodInfo);
-            var func = new Func<ControllerBase, Message, Message>((a, b) => genericFunc((TController)a, b));
-            var address = methodInfo.CustomAttributes
-                .FirstOrDefault(a => a.AttributeType == attributeType)?
-                .ConstructorArguments?
-                .FirstOrDefault()
-                .Value?.ToString() ?? throw new InvalidOperationException("Controller contains invalid attributes!");
-            _endpoints.Add(address, (controllerType.ToString(), newController, func));
-        }
-
-        return this;
+        return base.AddHandler<TController>();
     }
-
-    public ITcpApp Build()
+    
+    public IApplication Build()
     {
-        if (!_endpoints.Any() || _questionsFilePath is null || _assignmentsFolderPath is null)
+        if (!Endpoints.Any() || _questionsFilePath is null || _assignmentsFolderPath is null)
         {
             throw new InvalidOperationException("Initialize data first!");
         }
@@ -115,7 +85,7 @@ public class TcpHostBuilder : ITcpHostBuilder
         var sListener = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         var webApp = new TcpApp()
         {
-            Endpoints = _endpoints,
+            Endpoints = Endpoints,
             SocketListener = sListener,
             IpEndPoint = ipEndPoint
         };

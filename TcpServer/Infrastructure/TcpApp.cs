@@ -2,12 +2,12 @@
 using System.Net.Sockets;
 using System.Text;
 using Core;
-using Core.Interfaces;
+using Core.Interfaces.Infrastructure;
 using Newtonsoft.Json;
 
 namespace TcpServer.Infrastructure;
 
-public class TcpApp : ITcpApp
+public class TcpApp : IApplication
 {
     public Dictionary<string, (string, ControllerBase, Func<ControllerBase, Message, Message>)> Endpoints { get; init; }
     public int Port { get; private set; }

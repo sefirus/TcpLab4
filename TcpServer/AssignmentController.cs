@@ -10,8 +10,7 @@ namespace TcpServer;
 
 public class AssignmentController: ControllerBase
 {
-    private List<Question> _questions = new();
-    private AssignmentRepository? _assignmentRepository;
+    private AssignmentRepository? _assignmentRepository = new AssignmentRepository(AssignmentsFolderPath);
 
     private AssignmentRepository AssignmentRepository => 
         _assignmentRepository ??= new AssignmentRepository(AssignmentsFolderPath);
@@ -28,7 +27,7 @@ public class AssignmentController: ControllerBase
         return _questions;
     }
     
-    [ControllerMethod(Commands.StartNewAssignment)]
+    [HandlerMethod(Commands.StartNewAssignment)]
     public Message Start(Message request)
     {
         var assignee = request.Parameters[Args.AssigneeName];
@@ -52,7 +51,7 @@ public class AssignmentController: ControllerBase
         return response;
     }
 
-    [ControllerMethod(Commands.GetAssignments)]
+    [HandlerMethod(Commands.GetAssignments)]
     public Message Get(Message request)
     {
         var response = Message.GetResponseError("Wrong secret");
@@ -94,7 +93,7 @@ public class AssignmentController: ControllerBase
         return response;
     }
 
-    [ControllerMethod(Commands.AnswerQuestion)]
+    [HandlerMethod(Commands.AnswerQuestion)]
     public Message Answer(Message request)
     {
         if (!request.Parameters.ContainsKey(Args.AssignmentId))
