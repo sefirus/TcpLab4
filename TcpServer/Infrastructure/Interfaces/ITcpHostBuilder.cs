@@ -1,6 +1,7 @@
-﻿using Core.Interfaces.Infrastructure;
+﻿using Core;
+using Core.Interfaces.Infrastructure;
 
-namespace Core.Interfaces;
+namespace TcpServer.Infrastructure.Interfaces;
 
 public interface ITcpHostBuilder : IApplicationBuilder<ITcpHostBuilder, ControllerBase, Message, Message> 
 {

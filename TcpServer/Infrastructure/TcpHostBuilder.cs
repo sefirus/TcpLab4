@@ -4,8 +4,8 @@ using System.Text;
 using Core;
 using Core.Helpers;
 using Core.Infrastructure;
-using Core.Interfaces;
 using Core.Interfaces.Infrastructure;
+using TcpServer.Infrastructure.Interfaces;
 
 namespace TcpServer.Infrastructure;
 

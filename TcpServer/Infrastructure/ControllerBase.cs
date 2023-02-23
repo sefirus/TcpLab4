@@ -1,4 +1,4 @@
-﻿namespace Core;
+﻿namespace TcpServer.Infrastructure;
 
 public class ControllerBase
 {

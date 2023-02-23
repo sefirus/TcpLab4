@@ -3,6 +3,7 @@ using Core.Entities;
 using Core.Enums;
 using Core.Extensions;
 using Core.Utils;
+using TcpServer.Infrastructure;
 using TcpServer.Repositories;
 
 namespace TcpServer;
