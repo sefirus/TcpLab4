@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.Entities;
 using Core.Enums;
+using Core.Exceptions;
 using Core.Extensions;
 using Core.Utils;
 using TcpServer.Infrastructure;
@@ -46,10 +47,10 @@ public class AssignmentController: ControllerBase
     [HandlerMethod(Commands.GetAssignments)]
     public Message Get(Message request)
     {
-        var response = Message.GetResponseError("Wrong secret");
+        Message response;
         if (!request.Parameters.TryGetValue(Args.Secret, out var s) || s != Configuration["AccessSecret"])
         {
-            return response;
+            throw new IncorrectSecretException();
         }
         
         if (request.Parameters.TryGetValue(Args.AssignmentId, out var id))

@@ -109,7 +109,6 @@ public class Print
     public static string Assignment(Assignment assignment)
     {
         var result = PrintAssignment(assignment);
-        Console.WriteLine(result);
         return result;
     }
 }

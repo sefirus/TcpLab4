@@ -23,7 +23,8 @@ public class CliApp : IApplication
                 {
                     var argsString = input.Remove(0, command.Length);
                     var args = Args.Parse(argsString!);
-                    handler.Item3(handler.Item2, args);
+                    var messageToWrite = handler.Item3(handler.Item2, args);
+                    Console.WriteLine(messageToWrite);
                 }
                 catch (BadCommandException badCommandException)
                 {

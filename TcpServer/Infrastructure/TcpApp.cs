@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 using Core;
+using Core.Exceptions;
 using Core.Interfaces.Infrastructure;
 using Newtonsoft.Json;
 
@@ -52,7 +53,12 @@ public class TcpApp : IApplication
             try
             {
                 response = requestHandler.Item3(requestHandler.Item2, receivedMessage);
-            } 
+            }
+            catch (IncorrectSecretException)
+            {
+                socketHandler.Shutdown(SocketShutdown.Both);
+                socketHandler.Close();
+            }
             catch (Exception e)
             {
                 response.Body = e;

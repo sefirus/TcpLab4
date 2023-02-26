@@ -137,6 +137,10 @@ public class AssignmentsCommandsHandler : CommandHandlerBase
             request.Parameters.Add(Args.AssignmentId, guid.ToString());
         }
         var responseMessage = SendMessage(request);
+        if (responseMessage is null)
+        {
+            return "Wrong password!";
+        }
         if (id is not null)
         {
             var responseBody = responseMessage.GetDeserializedBody<Assignment>();
