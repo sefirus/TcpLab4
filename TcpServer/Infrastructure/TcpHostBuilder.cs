@@ -2,25 +2,19 @@
 using System.Net.Sockets;
 using System.Text;
 using Core;
-using Core.Helpers;
 using Core.Infrastructure;
 using Core.Interfaces.Infrastructure;
 using TcpServer.Infrastructure.Interfaces;
 
 namespace TcpServer.Infrastructure;
 
-public class TcpHostBuilder : BuilderBase<TcpHostBuilder, ControllerBase, Message, Message>, ITcpHostBuilder
+public class TcpHostBuilder : BuilderBase<ITcpHostBuilder, ControllerBase, Message, Message>, ITcpHostBuilder
 {
-    private int _port;
-    
-    private readonly Dictionary<string, string> _configuration;
     private string _questionsFilePath;
     private string _assignmentsFolderPath;
-    public TcpHostBuilder(string settingsFilePath)
+    public TcpHostBuilder()
     {
-        _configuration = JsonHelper.ReadObject<Dictionary<string, string>>(settingsFilePath)
-                         ?? throw new Exception("Cant read settings!");
-        _child = this;
+        Child = this;
     }
 
     public ITcpHostBuilder AddQuestions(string filePath)
@@ -52,22 +46,6 @@ public class TcpHostBuilder : BuilderBase<TcpHostBuilder, ControllerBase, Messag
         }
         return this;
     }
-
-    public ITcpHostBuilder InitializeHost()
-    {
-        if (!int.TryParse(_configuration["Port"], out var port))
-        {
-            throw new ArgumentNullException($"Port", "Port you provided is not in correct format!");
-        }
-
-        _port = port;
-        return this;
-    }
-
-    public new ITcpHostBuilder AddHandler<TController>() where TController : ControllerBase, new()
-    {
-        return base.AddHandler<TController>();
-    }
     
     public IApplication Build()
     {
@@ -77,7 +55,7 @@ public class TcpHostBuilder : BuilderBase<TcpHostBuilder, ControllerBase, Messag
         }
         foreach (var pair in Endpoints)
         {
-            pair.Value.Item2.Configuration = _configuration;
+            pair.Value.Item2.Configuration = Configuration;
         }
 
         Console.OutputEncoding = Encoding.Unicode;
@@ -85,7 +63,7 @@ public class TcpHostBuilder : BuilderBase<TcpHostBuilder, ControllerBase, Messag
 
         var ipHost = Dns.GetHostEntry("localhost");
         var ipAddr = ipHost.AddressList[0];
-        var ipEndPoint = new IPEndPoint(ipAddr, _port);
+        var ipEndPoint = new IPEndPoint(ipAddr, Port);
         var sListener = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         var webApp = new TcpApp()
         {

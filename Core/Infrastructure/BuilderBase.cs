@@ -1,13 +1,16 @@
-﻿namespace Core.Infrastructure;
+﻿using Core.Helpers;
+
+namespace Core.Infrastructure;
 
 public abstract class BuilderBase<TChild, THandlerBase, TFuncArg, TFuncReturn> 
 {
-    protected TChild? _child;
+    protected TChild Child;
 
     protected readonly Dictionary<string, (string, THandlerBase, Func<THandlerBase, TFuncArg, TFuncReturn>)> Endpoints =
         new();
-    
-    
+    protected readonly Dictionary<string, string> Configuration = new();
+    protected int Port { get; private set; }
+
     public TChild AddHandler<TController>() where TController : THandlerBase, new()
     {
         var controllerType = typeof(TController);
@@ -44,6 +47,23 @@ public abstract class BuilderBase<TChild, THandlerBase, TFuncArg, TFuncReturn>
             Endpoints.Add(address, (controllerType.ToString(), newController, func));
         }
 
-        return _child;
+        return Child;
+    }
+    
+    public TChild AddConfiguration(string filePath)
+    {
+        var readConfiguration = JsonHelper.ReadObject<Dictionary<string, string>>(filePath)
+                                ?? throw new Exception("Cant read settings!");
+        foreach (var keyValue in readConfiguration)
+        {
+            Configuration.Add(keyValue.Key, keyValue.Value);
+        }
+        if (!int.TryParse(Configuration["Port"], out var port))
+        {
+            throw new ArgumentNullException($"Port", "Port you provided is not in correct format!");
+        }
+
+        Port = port;
+        return Child;
     }
 }

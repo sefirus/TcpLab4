@@ -7,5 +7,4 @@ public interface ITcpHostBuilder : IApplicationBuilder<ITcpHostBuilder, Controll
 {
     ITcpHostBuilder AddQuestions(string filePath);
     ITcpHostBuilder AddAssignmentsFolder(string folderPath);
-    ITcpHostBuilder InitializeHost();
 }
