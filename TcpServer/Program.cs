@@ -6,7 +6,7 @@ var settingsPath = $@"{repoDirectory}\Core\Settings.json";
 var questionsPath = $@"{repoDirectory}\Core\Questions.json";
 var assignmentsFolderPath = $@"{repoDirectory}\TcpServer\Assignments";
 
-var webApp = new TcpHostBuilder()
+var webApp = new TcpApplicationBuilder()
     .AddConfiguration(settingsPath)
     .AddHandler<AssignmentController>()
     .AddAssignmentsFolder(assignmentsFolderPath)

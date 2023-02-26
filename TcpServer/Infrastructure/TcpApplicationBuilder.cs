@@ -8,11 +8,11 @@ using TcpServer.Infrastructure.Interfaces;
 
 namespace TcpServer.Infrastructure;
 
-public class TcpHostBuilder : BuilderBase<ITcpHostBuilder, ControllerBase, Message, Message>, ITcpHostBuilder
+public class TcpApplicationBuilder : BuilderBase<ITcpHostBuilder, ControllerBase, Message, Message>, ITcpHostBuilder
 {
     private string _questionsFilePath;
     private string _assignmentsFolderPath;
-    public TcpHostBuilder()
+    public TcpApplicationBuilder()
     {
         Child = this;
     }

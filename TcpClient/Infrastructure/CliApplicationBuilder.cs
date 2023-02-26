@@ -4,9 +4,9 @@ using TcpClient.Infrastructure.Interfaces;
 
 namespace TcpClient.Infrastructure;
 
-public class CliHostBuilder : BuilderBase<ICliHostBuilder, CommandHandlerBase, Dictionary<string, string>, string>, ICliHostBuilder
+public class CliApplicationBuilder : BuilderBase<ICliHostBuilder, CommandHandlerBase, Dictionary<string, string>, string>, ICliHostBuilder
 {
-    public CliHostBuilder()
+    public CliApplicationBuilder()
     {
         Child = this;
     }
