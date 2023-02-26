@@ -2,7 +2,7 @@
 
 namespace Core.Utils;
 
-public class Print
+public static class Print
 {
     private static string PrintAssignment(Assignment assignment, int indentLevel = 0)
     {

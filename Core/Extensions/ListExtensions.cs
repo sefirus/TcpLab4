@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Core.Extensions;
+﻿namespace Core.Extensions;
 
 public static class ListExtensions
 {
